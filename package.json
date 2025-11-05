@@ -1,0 +1,15 @@
+{
+  "name": "number-baseball",
+  "version": "1.0.0",
+  "description": "온라인 숫자 야구 대결 플랫폼입니다.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client": "pnpm --filter front-end",
+    "server": "pnpm --filter back-end"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.16.1"
+}
