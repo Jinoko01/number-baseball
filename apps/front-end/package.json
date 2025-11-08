@@ -12,16 +12,13 @@
     "@tanstack/react-query": "^5.90.7",
     "react-dom": "19.2.0",
     "zustand": "^5.0.8",
-    "components": "workspace:*"
+    "tailwind-config": "workspace:*",
+    "ui": "workspace:*"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
-    "tailwindcss": "^4",
     "typescript": "^5"
   }
 }
