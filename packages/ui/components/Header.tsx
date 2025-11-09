@@ -4,9 +4,18 @@ import Image from 'next/image';
 import { useAuthStore } from 'utils';
 import Logo from '../assets/logo.webp';
 import defaultProfile from '../assets/defaultProfile.webp';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export function Header() {
   const { avatar, id } = useAuthStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!id) {
+      router.replace('/');
+    }
+  });
 
   return (
     <header className='w-full flex justify-between items-center px-8 py-2 shadow-lg sticky top-0 bg-white'>
