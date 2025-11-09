@@ -1,19 +1,27 @@
-import { sendGithubCode } from '@/utils/actions/auth';
+'use client';
 
-interface GithubCallbackPageInterface {
-  searchParams: Promise<{ code: string }>;
-}
+import { sendGithubCode } from '@/utils/api/auth';
+import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
+import { useAuthStore } from 'utils';
 
-export default async function Callback({ searchParams }: GithubCallbackPageInterface) {
-  const code = (await searchParams).code;
+export default function Callback() {
+  const searchParams = useSearchParams();
+  const code = searchParams.get('code');
+  const { setId, setAvatar, setName, setProvider } = useAuthStore();
 
-  const res = await sendGithubCode(code);
-  console.log(res);
+  useEffect(() => {
+    async function fetchUserData() {
+      const res = sendGithubCode(code as unknown as string);
+      console.log('응답', res);
+    }
+
+    fetchUserData();
+  });
 
   return (
     <div>
       <h1>Callback</h1>
-      <p>{code}</p>
     </div>
   );
 }
