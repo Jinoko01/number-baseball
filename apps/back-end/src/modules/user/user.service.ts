@@ -3,12 +3,18 @@ import axios, { AxiosResponse } from 'axios';
 import { GithubCodeDto } from './dto/user.dto';
 import { ConfigService } from '@nestjs/config';
 
-export interface IGithubUserTypes {
+interface GithubUserInterface {
   githubId: string;
   avatar: string;
   name: string;
   description: string;
   location: string;
+}
+
+interface AuthInterface {
+  id: string;
+  avatar: string;
+  name: string;
 }
 
 @Injectable()
@@ -17,7 +23,7 @@ export default class UserService {
 
   public async getGithubInfo(
     githubCodeDto: GithubCodeDto,
-  ): Promise<IGithubUserTypes> {
+  ): Promise<AuthInterface> {
     const { code } = githubCodeDto;
     const getTokenUrl: string = 'https://github.com/login/oauth/access_token';
 
@@ -45,14 +51,12 @@ export default class UserService {
 
     const { login, avatar_url, name, bio, company } = data;
 
-    const githubInfo: IGithubUserTypes = {
-      githubId: login,
+    const authInfo: AuthInterface = {
+      id: login,
       avatar: avatar_url,
       name,
-      description: bio,
-      location: company,
     };
 
-    return githubInfo;
+    return authInfo;
   }
 }
