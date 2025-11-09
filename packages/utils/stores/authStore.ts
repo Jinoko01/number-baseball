@@ -7,6 +7,8 @@ interface AuthSlice {
   setAvatar: (avatar: string | null) => void;
   name: string | null;
   setName: (name: string | null) => void;
+  provider: string | null;
+  setProvider: (provider: string | null) => void;
 }
 
 const createGithubAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set) => ({
@@ -16,12 +18,12 @@ const createGithubAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set) 
   setAvatar: (avatar) => set({ avatar }),
   name: null,
   setName: (name) => set({ name }),
+  provider: null,
+  setProvider: (provider) => set({ provider }),
 });
 
 interface AuthStore extends AuthSlice {}
 
-const useAuthStore = create<AuthStore>((...a) => ({
+export const useAuthStore = create<AuthStore>((...a) => ({
   ...createGithubAuthSlice(...a),
 }));
-
-export default useAuthStore;
