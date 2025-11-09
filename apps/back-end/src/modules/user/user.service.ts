@@ -2,19 +2,13 @@ import { Injectable } from '@nestjs/common';
 import axios, { AxiosResponse } from 'axios';
 import { GithubCodeDto } from './dto/user.dto';
 import { ConfigService } from '@nestjs/config';
+import { AUTH_PROVIDER } from 'src/constants/provider';
 
-interface GithubUserInterface {
-  githubId: string;
-  avatar: string;
-  name: string;
-  description: string;
-  location: string;
-}
-
-interface AuthInterface {
+export interface AuthInterface {
   id: string;
   avatar: string;
   name: string;
+  provider: AUTH_PROVIDER;
 }
 
 @Injectable()
@@ -55,6 +49,7 @@ export default class UserService {
       id: login,
       avatar: avatar_url,
       name,
+      provider: 'Github',
     };
 
     return authInfo;
