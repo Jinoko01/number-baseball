@@ -12,8 +12,8 @@
     "@tanstack/react-query": "^5.90.7",
     "react-dom": "19.2.0",
     "zustand": "^5.0.8",
-    "tailwind-config": "workspace:*",
-    "ui": "workspace:*"
+    "ui": "workspace:*",
+    "util": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20",
