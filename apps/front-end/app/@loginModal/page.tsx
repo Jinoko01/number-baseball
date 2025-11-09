@@ -3,7 +3,7 @@
 import { GithubLoginButton, Modal } from 'ui';
 import LogoImage from '@/assets/logo.webp';
 import Image from 'next/image';
-import { useLogin } from '@/hooks/useLogin';
+import { useLogin } from 'utils';
 
 export default function LoginModal() {
   const { handleGithubLogin } = useLogin();

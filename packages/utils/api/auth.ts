@@ -8,6 +8,7 @@ export async function sendGithubCode(code: string) {
     method: 'POST',
     body: { code },
   });
+  const user = response.user;
 
-  return response;
+  return user;
 }
