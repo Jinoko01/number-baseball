@@ -177,7 +177,11 @@ importers:
         specifier: ^5
         version: 5.9.3
 
-  packages/ui: {}
+  packages/ui:
+    dependencies:
+      utils:
+        specifier: workspace:*
+        version: link:../utils
 
   packages/utils:
     dependencies:
