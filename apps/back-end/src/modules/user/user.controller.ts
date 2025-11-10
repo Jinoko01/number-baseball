@@ -1,22 +1,29 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, UseGuards, Get, Req, Delete } from '@nestjs/common';
 import UserService from './user.service';
-import { GithubCodeDto } from './dto/user.dto';
+import { AccessTokenGuard } from 'src/common/guard/access-token.guard';
+import { User } from '../entities/user.entity';
+import type { AuthenticatedRequest } from 'src/common/type/requestType';
 
 @Controller('user')
 export default class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('/github-info')
-  public async getGithubInfo(@Body() githubCodeDto: GithubCodeDto) {
-    console.log(githubCodeDto);
-    const user = await this.userService.getGithubInfo(githubCodeDto);
+  @UseGuards(AccessTokenGuard)
+  @Get('me')
+  async getMe(@Req() req: AuthenticatedRequest) {
+    const userId = req.user['sub'];
+    const user = await this.userService.findById(Number(userId));
 
-    return {
-      status: 200,
-      message: '깃허브 유저 정보를 조회하였습니다.',
-      data: {
-        user,
-      },
-    };
+    return this.shieldUserInformation(user);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Delete('me')
+  async remove(@Req() req: AuthenticatedRequest) {
+    return this.userService.remove(Number(req.user['sub']));
+  }
+
+  private shieldUserInformation(user: User | null) {
+    return { ...user, refreshToken: undefined };
   }
 }

@@ -1,1 +1,3 @@
-export type AUTH_PROVIDER = 'Github';
+export const AUTH_PROVIDER = {
+  GITHUB: 'Github',
+};

@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { RoomService } from './room.service';
 import { CreateRoomDto } from './dto/create-room.dto';
@@ -25,6 +26,7 @@ import {
 import { Room } from '../entities/room.entity';
 import { GetRoomsQueryDto } from './dto/get-rooms-query.dto';
 import { PaginatedRoomResponse } from './dto/pagenated-room-response.dto';
+import { AccessTokenGuard } from 'src/common/guard/access-token.guard';
 
 @ApiTags('room')
 // @ApiBearerAuth()
@@ -33,6 +35,7 @@ export class RoomController {
   constructor(private readonly roomService: RoomService) {}
 
   @Post()
+  @UseGuards(AccessTokenGuard)
   @ApiOperation({ summary: '방 생성' })
   @ApiCreatedResponse({ description: '생성 성공', type: Room })
   @ApiBadRequestResponse({ description: '유효성 오류' })
@@ -80,6 +83,7 @@ export class RoomController {
   }
 
   @Patch(':id')
+  @UseGuards(AccessTokenGuard)
   @ApiOperation({ summary: '방 정보 수정' })
   @ApiParam({ name: 'id', example: 1 })
   @ApiOkResponse({ description: '수정 성공', type: Room })
@@ -93,6 +97,7 @@ export class RoomController {
   }
 
   @Delete(':id')
+  @UseGuards(AccessTokenGuard)
   @ApiOperation({ summary: '방 삭제' })
   @ApiParam({ name: 'id', example: 1 })
   @ApiOkResponse({ description: '삭제 성공' })

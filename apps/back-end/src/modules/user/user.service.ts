@@ -1,57 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import axios, { AxiosResponse } from 'axios';
-import { GithubCodeDto } from './dto/user.dto';
-import { ConfigService } from '@nestjs/config';
-import { AUTH_PROVIDER } from 'src/constants/provider';
-
-export interface AuthInterface {
-  id: string;
-  avatar: string;
-  name: string;
-  provider: AUTH_PROVIDER;
-}
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../entities/user.entity';
+import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export default class UserService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-  public async getGithubInfo(
-    githubCodeDto: GithubCodeDto,
-  ): Promise<AuthInterface> {
-    const { code } = githubCodeDto;
-    const getTokenUrl: string = 'https://github.com/login/oauth/access_token';
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const createdUser = this.userRepository.create(createUserDto);
+    return this.userRepository.save(createdUser);
+  }
 
-    const request = {
-      code,
-      client_id: this.configService.get<string>('GITHUB_CLIENT_ID'),
-      client_secret: this.configService.get<string>('GITHUB_CLIENT_SECRET'),
-    };
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.find();
+  }
 
-    const response: AxiosResponse = await axios.post(getTokenUrl, request, {
-      headers: {
-        accept: 'application/json',
-      },
-    });
+  async findById(userId: number): Promise<User | null> {
+    return await this.userRepository.findOne({ where: { id: userId } });
+  }
 
-    const { access_token } = response.data;
+  async findByNickname(nickname: string): Promise<User | null> {
+    return await this.userRepository.findOne({ where: { nickname } });
+  }
 
-    const getUserUrl: string = 'https://api.github.com/user';
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User | null> {
+    await this.userRepository.update(id, updateUserDto);
+    return this.findById(id);
+  }
 
-    const { data } = await axios.get(getUserUrl, {
-      headers: {
-        Authorization: `token ${access_token}`,
-      },
-    });
-
-    const { login, avatar_url, name, bio, company } = data;
-
-    const authInfo: AuthInterface = {
-      id: login,
-      avatar: avatar_url,
-      name,
-      provider: 'Github',
-    };
-
-    return authInfo;
+  async remove(id: number): Promise<void> {
+    await this.userRepository.delete(id);
   }
 }
