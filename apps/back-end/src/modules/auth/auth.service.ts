@@ -49,7 +49,7 @@ export class AuthService {
     });
     console.log(data);
 
-    const { login, avatar_url, name, bio, company } = data;
+    const { login, avatar_url, name } = data;
 
     const authInfo: AuthInterface = {
       nickname: login,

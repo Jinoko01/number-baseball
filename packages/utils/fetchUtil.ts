@@ -10,12 +10,7 @@ interface FetchUtilInterface {
   body?: unknown;
 }
 
-export default async function fetchUtil({
-  url,
-  method,
-  headers = BASIC_HEADER,
-  body,
-}: FetchUtilInterface) {
+export async function fetchUtil({ url, method, headers = BASIC_HEADER, body }: FetchUtilInterface) {
   const response = await fetch(url, {
     method,
     headers,

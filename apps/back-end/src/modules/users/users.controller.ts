@@ -4,7 +4,7 @@ import { AccessTokenGuard } from 'src/common/guard/access-token.guard';
 import { Users } from '../entities/users.entity';
 import type { AuthenticatedRequest } from 'src/common/type/requestType';
 
-@Controller('user')
+@Controller('users')
 export default class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -13,6 +13,7 @@ export default class UsersController {
   async getMe(@Req() req: AuthenticatedRequest) {
     const userId = req.user['sub'];
     const user = await this.usersService.findById(Number(userId));
+    console.log(user);
 
     return this.shieldUserInformation(user);
   }
