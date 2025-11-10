@@ -1,18 +1,18 @@
 import { Controller, UseGuards, Get, Req, Delete } from '@nestjs/common';
-import UserService from './user.service';
+import UsersService from './users.service';
 import { AccessTokenGuard } from 'src/common/guard/access-token.guard';
-import { User } from '../entities/user.entity';
+import { Users } from '../entities/users.entity';
 import type { AuthenticatedRequest } from 'src/common/type/requestType';
 
 @Controller('user')
-export default class UserController {
-  constructor(private readonly userService: UserService) {}
+export default class UsersController {
+  constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(AccessTokenGuard)
   @Get('me')
   async getMe(@Req() req: AuthenticatedRequest) {
     const userId = req.user['sub'];
-    const user = await this.userService.findById(Number(userId));
+    const user = await this.usersService.findById(Number(userId));
 
     return this.shieldUserInformation(user);
   }
@@ -20,10 +20,10 @@ export default class UserController {
   @UseGuards(AccessTokenGuard)
   @Delete('me')
   async remove(@Req() req: AuthenticatedRequest) {
-    return this.userService.remove(Number(req.user['sub']));
+    return this.usersService.remove(Number(req.user['sub']));
   }
 
-  private shieldUserInformation(user: User | null) {
+  private shieldUserInformation(user: Users | null) {
     return { ...user, refreshToken: undefined };
   }
 }

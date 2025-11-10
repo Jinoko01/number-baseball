@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UserModule } from './modules/user/user.module';
+import { UsersModule } from './modules/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RoomModule } from './modules/room/room.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -20,7 +20,7 @@ import typeorm from './config/typeorm';
       useFactory: (configService: ConfigService) =>
         configService.getOrThrow('typeorm'),
     }),
-    UserModule,
+    UsersModule,
     RoomModule,
     AuthModule,
   ],

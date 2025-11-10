@@ -9,10 +9,10 @@ const config = {
   username: `${process.env.DB_USERNAME || 'test'}`,
   password: `${process.env.DB_PASSWORD || 'test'}`,
   database: `${process.env.DB_DATABASE || 'test'}`,
-  entities: ['dist/**/**/*.entity{.ts,.js}'],
+  entities: ['dist/**/**/*.entities{.ts,.js}'],
   migrations: ['dist/migrations/*{.ts,.js}'],
   autoLoadEntities: true,
-  synchronize: false,
+  synchronize: true, // 배포 시 false로 변경
 };
 
 export default registerAs('typeorm', () => config);

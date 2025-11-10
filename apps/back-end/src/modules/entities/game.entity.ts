@@ -4,17 +4,17 @@ import {
   CreateDateColumn,
   ManyToOne,
 } from 'typeorm';
-import { User } from './user.entity';
+import { Users } from './users.entity';
 
 @Entity()
 export class Game {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
-  participants: User[];
+  participants: Users[];
 
-  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
-  winner: User | null;
+  @ManyToOne(() => Users, { nullable: true, onDelete: 'SET NULL' })
+  winner: Users | null;
 
   @CreateDateColumn({
     type: 'timestamp',

@@ -1,9 +1,9 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import UserService from '../user/user.service';
+import UsersService from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon2 from 'argon2';
-import { User } from '../entities/user.entity';
+import { Users } from '../entities/users.entity';
 import { GithubCodeDto } from './dto/github-code.dto';
 import axios, { AxiosResponse } from 'axios';
 import { AUTH_PROVIDER } from 'src/constants/provider';
@@ -18,7 +18,7 @@ export interface AuthInterface {
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UserService,
+    private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
@@ -64,10 +64,10 @@ export class AuthService {
   async githubSignIn(githubCodeDto: GithubCodeDto) {
     const { code } = githubCodeDto;
     const authInfo: AuthInterface = await this.getGithubInfo(code);
-    let user = await this.userService.findByNickname(authInfo.nickname);
+    let user = await this.usersService.findByNickname(authInfo.nickname);
 
     if (!user) {
-      user = await this.userService.create({
+      user = await this.usersService.create({
         nickname: authInfo.nickname,
         avatar: authInfo.avatar,
         name: authInfo.name,
@@ -82,13 +82,13 @@ export class AuthService {
   }
 
   async signOut(userId: number) {
-    await this.userService.update(userId, {
+    await this.usersService.update(userId, {
       refreshToken: undefined,
     });
   }
 
   async refreshAllTokens(userId: number, refreshToken: string) {
-    const user = await this.userService.findById(userId);
+    const user = await this.usersService.findById(userId);
 
     if (!user || !user.refreshToken) {
       throw new ForbiddenException('refresh token이 존재하지 않습니다.');
@@ -114,12 +114,12 @@ export class AuthService {
 
   private async updateRefreshToken(userId: number, refreshToken: string) {
     const hashedRefreshToken = await this.hashFn(refreshToken);
-    await this.userService.update(userId, {
+    await this.usersService.update(userId, {
       refreshToken: hashedRefreshToken,
     });
   }
 
-  async getTokens(user: User): Promise<{
+  async getTokens(user: Users): Promise<{
     accessToken: string;
     refreshToken: string;
   }> {
