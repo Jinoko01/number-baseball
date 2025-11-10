@@ -22,8 +22,7 @@ export default async function fetchUtil({
     body: body ? JSON.stringify(body) : undefined,
     credentials: 'include',
   });
-  const responseObj = await response.json();
-  const data = responseObj.data;
+  const data = await response.json();
 
   return data;
 }
