@@ -3,23 +3,45 @@ import UsersService from './users.service';
 import { AccessTokenGuard } from 'src/common/guard/access-token.guard';
 import { Users } from '../entities/users.entity';
 import type { AuthenticatedRequest } from 'src/common/type/requestType';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 @Controller('users')
 export default class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(AccessTokenGuard)
   @Get('me')
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('accessToken')
+  @ApiOperation({ summary: '내 정보 조회' })
+  @ApiOkResponse({
+    description: '내 정보 조회 성공',
+    type: Users,
+    example: {
+      id: 1,
+      nickname: 'Jinoko01',
+      avatar: 'http://어쩌고.저쩌고/깃허브/프로필/이미지링크',
+      refreshToken: undefined,
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async getMe(@Req() req: AuthenticatedRequest) {
     const userId = req.user['sub'];
     const user = await this.usersService.findById(Number(userId));
-    console.log(user);
 
     return this.shieldUserInformation(user);
   }
 
-  @UseGuards(AccessTokenGuard)
   @Delete('me')
+  @UseGuards(AccessTokenGuard)
+  @ApiOperation({ summary: '내 정보 삭제' })
+  @ApiBearerAuth('accessToken')
+  @ApiOkResponse({ description: '내 정보 삭제 성공' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async remove(@Req() req: AuthenticatedRequest) {
     return this.usersService.remove(Number(req.user['sub']));
   }

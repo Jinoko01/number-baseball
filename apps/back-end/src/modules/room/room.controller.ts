@@ -15,12 +15,14 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiUnauthorizedResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
 import { Room } from '../entities/room.entity';
@@ -29,16 +31,16 @@ import { PaginatedRoomResponse } from './dto/pagenated-room-response.dto';
 import { AccessTokenGuard } from 'src/common/guard/access-token.guard';
 
 @ApiTags('room')
-// @ApiBearerAuth()
 @Controller('room')
 export class RoomController {
   constructor(private readonly roomService: RoomService) {}
 
   @Post()
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('accessToken')
   @ApiOperation({ summary: '방 생성' })
   @ApiCreatedResponse({ description: '생성 성공', type: Room })
-  @ApiBadRequestResponse({ description: '유효성 오류' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async create(@Body() createRoomDto: CreateRoomDto): Promise<Room> {
     return await this.roomService.create(createRoomDto);
   }
@@ -84,10 +86,12 @@ export class RoomController {
 
   @Patch(':id')
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('accessToken')
   @ApiOperation({ summary: '방 정보 수정' })
   @ApiParam({ name: 'id', example: 1 })
   @ApiOkResponse({ description: '수정 성공', type: Room })
-  @ApiBadRequestResponse({ description: '유효성 오류' })
+  @ApiBadRequestResponse({ description: '잘못된 요청' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiNotFoundResponse({ description: '존재하지 않는 방' })
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -98,10 +102,12 @@ export class RoomController {
 
   @Delete(':id')
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('accessToken')
   @ApiOperation({ summary: '방 삭제' })
   @ApiParam({ name: 'id', example: 1 })
   @ApiOkResponse({ description: '삭제 성공' })
   @ApiNotFoundResponse({ description: '존재하지 않는 방' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.roomService.remove(id);
   }
