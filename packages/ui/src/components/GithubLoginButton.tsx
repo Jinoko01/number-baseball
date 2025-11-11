@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import GithubLogo from '../assets/githubLogo.svg';
+import GithubLogo from '../../assets/githubLogo.svg';
 
 export function GithubLoginButton({ onClick }: { onClick: () => void }) {
   return (
