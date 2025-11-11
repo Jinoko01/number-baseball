@@ -1,12 +1,11 @@
 'use server';
 
 import { fetchUtil } from 'utils';
-
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+import { API_ROUTE_URL } from '../constants/api';
 
 export async function getMyProfile(accessToken: string) {
   const profile = await fetchUtil({
-    url: `${baseUrl}/users/me`,
+    url: `${API_ROUTE_URL}/users/me`,
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

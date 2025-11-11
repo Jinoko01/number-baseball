@@ -1,5 +1,5 @@
-import { getMyProfile } from '@/utils/actions/getMyProfile';
-import { cookies } from 'next/headers';
+import { getMyProfile } from '@/lib/actions/getMyProfile';
+import { getCookie } from '@/lib/utils/next-cookie';
 import { redirect } from 'next/navigation';
 import { Header } from 'ui';
 
@@ -8,14 +8,14 @@ interface HomeLayoutInterface {
 }
 
 export default async function HomeLayout({ children }: HomeLayoutInterface) {
-  const cookie = await cookies();
-  const accessToken = cookie.get('accessToken')?.value;
+  const accessToken = await getCookie('accessToken');
 
   if (!accessToken) {
     return redirect('/');
   }
 
   const myProfile = await getMyProfile(accessToken);
+  console.log(myProfile);
 
   return (
     <div>
