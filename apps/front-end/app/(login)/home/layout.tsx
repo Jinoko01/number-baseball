@@ -15,7 +15,6 @@ export default async function HomeLayout({ children }: HomeLayoutInterface) {
   }
 
   const myProfile = await getMyProfile(accessToken);
-  console.log(myProfile);
 
   return (
     <div>

@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Dialog,
   DialogClose,
@@ -11,6 +13,18 @@ import {
 import { Label } from '../../@workspace/ui/components/label';
 import { Input } from '../../@workspace/ui/components/input';
 import { Button } from './Button';
+import { useFormStatus } from 'react-dom';
+import { createRoomAction } from '@/lib/actions/createRoom';
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button size='sm' type='submit' disabled={pending}>
+      {pending ? '만들기...' : '만들기'}
+    </Button>
+  );
+}
 
 export function CreateRoomDialog() {
   return (
@@ -27,22 +41,29 @@ export function CreateRoomDialog() {
             친구와 함께 숫자 야구 게임을 즐길 방을 만들어보세요.
           </DialogDescription>
         </DialogHeader>
-        <div className='flex flex-col gap-2'>
-          <Label className='font-semibold' htmlFor='roomName'>
-            방 이름
-          </Label>
-          <Input id='roomName' type='text' placeholder='예: 숫자 야구 한판 하실분?' />
-        </div>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button size='sm' variant='outline'>
-              취소
-            </Button>
-          </DialogClose>
-          <DialogClose asChild>
-            <Button size='sm'>만들기</Button>
-          </DialogClose>
-        </DialogFooter>
+        <form action={createRoomAction}>
+          <div className='flex flex-col gap-2 mb-2'>
+            <Label className='font-semibold' htmlFor='roomName'>
+              방 이름
+            </Label>
+            <Input
+              id='roomName'
+              name='roomName'
+              type='text'
+              placeholder='예: 숫자 야구 한판 하실분?'
+              maxLength={29}
+              required
+            />
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button size='sm' variant='outline' type='button'>
+                취소
+              </Button>
+            </DialogClose>
+            <SubmitButton />
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
