@@ -10,7 +10,10 @@ interface HomeProps {
 
 export default async function Home({ searchParams }: HomeProps) {
   const params = await searchParams;
-  const rooms = await getRooms();
+  const rooms = await getRooms({
+    page: Number(params.page ?? 1),
+    limit: Number(params.limit ?? 10),
+  });
 
   return (
     <div className='bg-blue-50 min-h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] px-2 py-2'>
