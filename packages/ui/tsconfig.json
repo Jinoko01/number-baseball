@@ -9,6 +9,7 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@/*": ["../../apps/front-end/*"],
       "ui": ["./*"]
     }
   }
