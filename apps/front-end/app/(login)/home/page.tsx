@@ -1,3 +1,4 @@
+import { revalidateHomeAction } from '@/lib/actions/revalidageGameRoomAction';
 import { getRooms } from '@/lib/apis/room/getRooms';
 import { Button, CreateRoomDialog } from 'ui';
 
@@ -25,9 +26,11 @@ export default async function Home({ searchParams }: HomeProps) {
               <p className='text-sm text-gray-600'>총 {rooms.total}개의 방</p>
             </div>
             <div className='flex items-center gap-2'>
-              <Button size='sm' variant='outline'>
-                <span className='text-xs font-semibold'>새로고침</span>
-              </Button>
+              <form action={revalidateHomeAction}>
+                <Button size='sm' variant='outline'>
+                  <span className='text-xs font-semibold'>새로고침</span>
+                </Button>
+              </form>
               <CreateRoomDialog />
             </div>
           </header>
