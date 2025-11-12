@@ -11,6 +11,7 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
     "@tanstack/react-query": "^5.90.7",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.553.0",
     "react-dom": "19.2.0",
     "ui": "workspace:*",
@@ -18,6 +19,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
