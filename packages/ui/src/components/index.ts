@@ -3,3 +3,4 @@ export * from './Button';
 export * from './GithubLoginButton';
 export * from './Header';
 export * from './CreateRoomDialog';
+export * from './Pagination';
