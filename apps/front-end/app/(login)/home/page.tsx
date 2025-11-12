@@ -16,7 +16,6 @@ export default async function Home({ searchParams }: HomeProps) {
     page: Number(params.page ?? 1),
     limit: Number(params.limit ?? 10),
   });
-  console.log(rooms);
 
   return (
     <div className='bg-blue-50 min-h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] px-2 py-2'>

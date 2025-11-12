@@ -10,7 +10,7 @@ interface JwtPayload {
   exp: number;
 }
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const resCheckTokenExpired = await checkTokenExpired(req);
 
   if (resCheckTokenExpired) {
@@ -45,15 +45,11 @@ async function checkTokenExpired(req: NextRequest): Promise<NextResponse | null>
   if (accessToken && _refreshToken && isValidAccessToken(accessToken.value)) {
     try {
       const res = await refreshToken();
-      if (res.status !== 200) {
-        throw new Error('Invalid tokens');
-      }
-      const data = (await res.json()).data;
-      req.cookies.set('accessToken', data.accessToken);
-      req.cookies.set('refreshToken', data.refreshToken);
+      req.cookies.set('accessToken', res.accessToken);
+      req.cookies.set('refreshToken', res.refreshToken);
 
       const response = NextResponse.redirect(new URL(req.nextUrl.pathname, req.url));
-      return setResponseTokenCookie(response, data.accessToken, data.refreshToken);
+      return setResponseTokenCookie(response, res.accessToken, res.refreshToken);
     } catch (err) {
       console.error(`[checkTokenExpired] 토큰 재발급 실패 ${err}`);
       const res = NextResponse.redirect(req.nextUrl.toString(), {
@@ -68,5 +64,6 @@ async function checkTokenExpired(req: NextRequest): Promise<NextResponse | null>
 }
 
 export const config = {
+  source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
   matcher: ['/home', '/room/:path*'],
 };

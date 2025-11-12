@@ -21,7 +21,7 @@ export function Pagination({ page = 1, totalPages = 1, hasNext, hasPrev }: Pagin
           </Link>
         )}
       </div>
-      <span className='justify-self-center'>
+      <span className='justify-self-center font-bold'>
         {page} / {totalPages}
       </span>
       <div className='justify-self-end'>

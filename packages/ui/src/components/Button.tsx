@@ -26,7 +26,7 @@ export function Button({ children, size = 'md', variant = 'default', ...props }:
   return (
     <button
       {...props}
-      className={`cursor-pointer hover-bg-smooth ${sizes[size]} ${variants[variant]} ${props.className}`}
+      className={`cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-200 hover-bg-smooth ${sizes[size]} ${variants[variant]} ${props.className}`}
     >
       {children}
     </button>

@@ -21,7 +21,7 @@ function SubmitButton() {
 
   return (
     <Button size='sm' type='submit' disabled={pending}>
-      {pending ? '만들기...' : '만들기'}
+      {pending ? '만들기' : '만들기'}
     </Button>
   );
 }
