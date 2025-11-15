@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import Logo from '../../assets/logo.webp';
-import defaultProfile from '../../assets/defaultProfile.webp';
+import Logo from '../../../assets/logo.webp';
+import defaultProfile from '../../../assets/defaultProfile.webp';
 
 interface HeaderInterface {
   nickname: string;
