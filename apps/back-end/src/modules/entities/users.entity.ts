@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  OneToMany,
+} from 'typeorm';
+import { Room } from './room.entity';
+import { RoomParticipant } from './room-participant.entity';
 
 @Entity()
 export class Users {
@@ -31,4 +39,10 @@ export class Users {
     nullable: true,
   })
   refreshToken?: string;
+
+  @ManyToMany(() => Room, (room) => room.participants)
+  rooms: Room[];
+
+  @OneToMany(() => RoomParticipant, (rp) => rp.user)
+  roomParticipants: RoomParticipant[];
 }

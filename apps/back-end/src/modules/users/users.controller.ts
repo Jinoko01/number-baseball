@@ -5,6 +5,7 @@ import { Users } from '../entities/users.entity';
 import type { AuthenticatedRequest } from 'src/common/type/requestType';
 import {
   ApiBearerAuth,
+  ApiHeader,
   ApiOkResponse,
   ApiOperation,
   ApiUnauthorizedResponse,
@@ -17,6 +18,11 @@ export default class UsersController {
   @Get('me')
   @UseGuards(AccessTokenGuard)
   @ApiBearerAuth('accessToken')
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
   @ApiOperation({ summary: '내 정보 조회' })
   @ApiOkResponse({
     description: '내 정보 조회 성공',
@@ -40,6 +46,11 @@ export default class UsersController {
   @UseGuards(AccessTokenGuard)
   @ApiOperation({ summary: '내 정보 삭제' })
   @ApiBearerAuth('accessToken')
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
   @ApiOkResponse({ description: '내 정보 삭제 성공' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async remove(@Req() req: AuthenticatedRequest) {

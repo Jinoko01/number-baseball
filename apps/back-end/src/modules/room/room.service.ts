@@ -10,12 +10,19 @@ import { Room } from '../entities/room.entity';
 import { DataSource, Repository } from 'typeorm';
 import { GetRoomsQueryDto } from './dto/get-rooms-query.dto';
 import { PaginatedRoomResponse } from './dto/pagenated-room-response.dto';
+import { Users } from '../entities/users.entity';
+import { RoomParticipant } from '../entities/room-participant.entity';
+import { RoomParticipantRole } from 'src/common/enum/room-participant-role.enum';
 
 @Injectable()
 export class RoomService {
   constructor(
     @InjectRepository(Room)
     private readonly roomRepository: Repository<Room>,
+    @InjectRepository(Users)
+    private readonly usersRepository: Repository<Users>,
+    @InjectRepository(RoomParticipant)
+    private readonly roomParticipant: Repository<RoomParticipant>,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -57,30 +64,112 @@ export class RoomService {
     return room;
   }
 
-  async joinRoom(id: number) {
+  async joinRoom(roomId: number, userId: number) {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException('존재하지 않는 사용자입니다.');
+    }
+
     return this.dataSource.transaction(async (manager) => {
-      const updateResult = await manager
-        .createQueryBuilder()
-        .update(Room)
-        .set({
-          currentCount: () => `"currentCount" + 1`,
-        })
-        .where('id = :id', { id })
-        .andWhere(`"currentCount" < "capacity"`)
-        .returning('*')
-        .execute();
+      const roomRepo = manager.getRepository(Room);
+      const participantRepo = manager.getRepository(RoomParticipant);
 
-      if (updateResult.affected === 0) {
-        const room = await manager.findOne(Room, { where: { id } });
+      const room = await roomRepo.findOne({
+        where: { id: roomId },
+        relations: ['participants', 'participants.user'],
+        lock: { mode: 'pessimistic_write' },
+      });
 
-        if (!room) {
-          throw new NotFoundException('존재하지 않는 방입니다.');
-        }
+      if (!room) {
+        throw new NotFoundException('존재하지 않는 방입니다.');
+      }
 
+      const alreadyJoined = room.participants.some(
+        (participant) => participant.user.id === userId,
+      );
+      if (alreadyJoined) {
+        throw new BadRequestException('이미 해당 방에 참가 중인 사용자입니다.');
+      }
+
+      if (room.currentCount >= room.capacity) {
         throw new BadRequestException('방이 꽉 찼습니다.');
       }
 
-      const updatedRoom = updateResult.raw[0] as Room;
+      const role =
+        room.participants.length === 0
+          ? RoomParticipantRole.HOST
+          : RoomParticipantRole.MEMBER;
+
+      room.currentCount += 1;
+      await roomRepo.save(room);
+
+      const roomParticipant = participantRepo.create({
+        room,
+        user,
+        role,
+      });
+      await participantRepo.save(roomParticipant);
+
+      const updatedRoom = await roomRepo.findOne({
+        where: { id: roomId },
+        relations: ['participants', 'participants.user'],
+      });
+
+      return updatedRoom;
+    });
+  }
+
+  async leaveRoom(roomId: number, userId: number) {
+    return this.dataSource.transaction(async (manager) => {
+      const roomRepo = manager.getRepository(Room);
+      const participantRepo = manager.getRepository(RoomParticipant);
+
+      const room = await roomRepo.findOne({
+        where: { id: roomId },
+        relations: ['participants', 'participants.user'],
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      if (!room) {
+        throw new NotFoundException('존재하지 않는 방입니다.');
+      }
+
+      const leavingParticipant = room.participants.find(
+        (participant) => participant.user.id === userId,
+      );
+
+      if (!leavingParticipant) {
+        throw new BadRequestException('해당 방에 참가 중인 사용자가 아닙니다.');
+      }
+
+      const leavingWasHost =
+        leavingParticipant.role === RoomParticipantRole.HOST;
+
+      await participantRepo.delete({ id: leavingParticipant.id });
+
+      room.currentCount = Math.max(0, room.currentCount - 1);
+      await roomRepo.save(room);
+
+      if (leavingWasHost) {
+        const remainingParticipants = await participantRepo.find({
+          where: { room: { id: roomId } },
+          relations: ['user'],
+          order: { joinedAt: 'ASC' },
+        });
+
+        if (remainingParticipants.length > 0) {
+          const newHost = remainingParticipants[0];
+          newHost.role = RoomParticipantRole.HOST;
+          await participantRepo.save(newHost);
+        }
+      }
+
+      const updatedRoom = await roomRepo.findOne({
+        where: { id: roomId },
+        relations: ['participants', 'participants.user'],
+      });
+
       return updatedRoom;
     });
   }
