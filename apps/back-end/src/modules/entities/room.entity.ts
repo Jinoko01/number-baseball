@@ -25,7 +25,7 @@ export class Room {
   capacity: number;
 
   @ApiProperty({ example: 1, minimum: 1, maximum: 2, description: '현재 인원' })
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'int', nullable: false })
   currentCount: number;
 
   @ApiProperty({

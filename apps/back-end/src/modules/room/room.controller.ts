@@ -84,6 +84,19 @@ export class RoomController {
     return await this.roomService.findOne(id);
   }
 
+  @Patch(':id/join')
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('accessToken')
+  @ApiOperation({ summary: '방 참여' })
+  @ApiParam({ name: 'id', example: 1 })
+  @ApiOkResponse({ description: '참여 성공', type: Room })
+  @ApiBadRequestResponse({ description: '방이 꽉 찼습니다.' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiNotFoundResponse({ description: '존재하지 않는 방입니다.' })
+  async joinRoom(@Param('id', ParseIntPipe) id: number): Promise<Room | null> {
+    return await this.roomService.joinRoom(id);
+  }
+
   @Patch(':id')
   @UseGuards(AccessTokenGuard)
   @ApiBearerAuth('accessToken')
