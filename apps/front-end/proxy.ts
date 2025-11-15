@@ -1,14 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { setResponseTokenCookie } from '@/lib/utils/routeFuntions';
 import { refreshToken } from '@/lib/actions/refreshToken';
-
-interface JwtPayload {
-  sub: number;
-  username: string;
-  iat: number;
-  exp: number;
-}
 
 export async function proxy(req: NextRequest) {
   const resCheckTokenExpired = await checkTokenExpired(req);
@@ -17,12 +10,21 @@ export async function proxy(req: NextRequest) {
     return resCheckTokenExpired;
   }
 
+  if (req.nextUrl.pathname === '/') {
+    const accessToken = req.cookies.get('accessToken')?.value;
+
+    if (accessToken && !isValidAccessToken(accessToken)) {
+      const url = new URL('/home', req.url);
+      return NextResponse.redirect(url);
+    }
+  }
+
   return NextResponse.next();
 }
 
 function isValidAccessToken(token: string): boolean {
   try {
-    const decoded: JwtPayload | null = jwt.decode(token);
+    const decoded: JwtPayload | null = jwt.decode(token, { json: true });
     if (!decoded) {
       console.error('유효한 토큰이 아닙니다.');
       return true;
@@ -31,7 +33,7 @@ function isValidAccessToken(token: string): boolean {
     const { exp } = decoded;
 
     const now = Date.now() / 1000;
-    return now > exp;
+    return now > exp!;
   } catch (error) {
     console.error(error);
     return true;
@@ -65,5 +67,5 @@ async function checkTokenExpired(req: NextRequest): Promise<NextResponse | null>
 
 export const config = {
   source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  matcher: ['/home', '/room/:path*'],
+  matcher: ['/', '/home', '/room/:path*'],
 };

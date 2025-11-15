@@ -1,7 +1,6 @@
 import { revalidateHomeAction } from '@/lib/actions/revalidateGameRoomAction';
 import { getRooms } from '@/lib/apis/room/getRooms';
-import Link from 'next/link';
-import { Button, CreateRoomDialog, Pagination } from 'ui';
+import { Button, CreateRoomDialog, Pagination, RoomCard } from 'ui';
 
 interface HomeProps {
   searchParams: Promise<{
@@ -36,20 +35,8 @@ export default async function Home({ searchParams }: HomeProps) {
             </div>
           </header>
           <ul className='flex-1 grid grid-cols-2 grid-rows-[repeat(5,minmax(0,1fr))] grid-flow-col gap-2 pt-2'>
-            {rooms.items.map((item) => (
-              <Link key={item.id} href={`/room/${item.id}`}>
-                <li className='cursor-pointer hover:shadow-lg flex flex-col justify-between rounded-md overflow-hidden shadow-md'>
-                  <div className='bg-blue-100 w-full'>
-                    <h3 className='text-md font-semibold text-center p-1'>{item.title}</h3>
-                  </div>
-                  <div className='flex justify-between items-center gap-2 px-2 py-1'>
-                    <div className=''>방 상태</div>
-                    <div>
-                      {item.currentCount} / {item.capacity}
-                    </div>
-                  </div>
-                </li>
-              </Link>
+            {rooms.items.map((room) => (
+              <RoomCard key={room.id} room={room} />
             ))}
           </ul>
           <div className='flex justify-center items-center pt-6'>

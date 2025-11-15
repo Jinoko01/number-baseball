@@ -2,22 +2,22 @@ import { fetchUtil } from 'utils';
 import { API_ROUTE_URL } from '../../constants/api';
 import type { Room } from 'utils';
 
-interface PostCreateRoomBody {
-  title: string;
+interface PatchJoinRoomBody {
+  id: number;
   headers?: HeadersInit;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface PostCreateRoomResponse extends Room {}
+interface PatchJoinRoomResponse extends Room {}
 
-export async function postCreateRoom({
-  title,
+export async function patchJoinRoom({
+  id,
   headers,
-}: PostCreateRoomBody): Promise<PostCreateRoomResponse> {
+}: PatchJoinRoomBody): Promise<PatchJoinRoomResponse> {
   return await fetchUtil({
-    url: `${API_ROUTE_URL}/room`,
-    method: 'POST',
+    url: `${API_ROUTE_URL}/room/${id}/join`,
+    method: 'PATCH',
     headers,
-    body: { title },
+    body: { id },
   });
 }

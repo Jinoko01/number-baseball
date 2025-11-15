@@ -1,5 +1,5 @@
 import { API_ROUTE_URL } from '@/lib/constants/api';
-import type { Room } from '@/lib/types/Room';
+import type { Room } from 'utils';
 import { fetchUtil } from 'utils';
 
 interface GetRoomsQuery {
