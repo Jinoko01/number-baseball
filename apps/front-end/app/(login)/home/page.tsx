@@ -1,6 +1,6 @@
 import { revalidateHomeAction } from '@/lib/actions/revalidateGameRoomAction';
 import { getRooms } from '@/lib/apis/room/getRooms';
-import { Button, CreateRoomDialog, Pagination, RoomCard } from 'ui';
+import { Button, CreateRoomDialog, HomeChattingLayout, Pagination, RoomCard } from 'ui';
 
 interface HomeProps {
   searchParams: Promise<{
@@ -18,7 +18,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
   return (
     <div className='bg-blue-50 min-h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] px-2 py-2'>
-      <div className='flex min-h-[calc((100vh-4rem))] max-h-[calc((100vh-4rem))]'>
+      <div className='flex min-h-[calc((100vh-4rem))] max-h-[calc((100vh-4rem))] gap-2'>
         <div className='flex flex-col w-2/3 bg-white rounded-md shadow-sm px-4 pt-2'>
           <header className='flex justify-between items-center'>
             <div className='flex items-center gap-2'>
@@ -48,7 +48,9 @@ export default async function Home({ searchParams }: HomeProps) {
             />
           </div>
         </div>
-        <div className='w-1/3'>그냥 우측 화면</div>
+        <div className='w-1/3'>
+          <HomeChattingLayout />
+        </div>
       </div>
     </div>
   );
