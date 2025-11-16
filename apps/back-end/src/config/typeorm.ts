@@ -21,6 +21,11 @@ const config = {
   autoLoadEntities: true,
   synchronize: false,
   ssl: isProd ? { rejectUnauthorized: false } : false,
+  extra: {
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  },
 };
 
 export default registerAs('typeorm', () => config);
