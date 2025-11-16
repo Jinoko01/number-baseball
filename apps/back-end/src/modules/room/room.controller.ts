@@ -31,7 +31,7 @@ import { Room } from '../entities/room.entity';
 import { GetRoomsQueryDto } from './dto/get-rooms-query.dto';
 import { PaginatedRoomResponse } from './dto/pagenated-room-response.dto';
 import { AccessTokenGuard } from 'src/common/guard/access-token.guard';
-import type { AuthenticatedRequest } from 'src/common/type/requestType';
+import type { AuthenticatedRequest } from 'src/common/type/request.type';
 
 @ApiTags('room')
 @Controller('room')

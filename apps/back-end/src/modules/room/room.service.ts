@@ -30,7 +30,7 @@ export class RoomService {
     const room = this.roomRepository.create({
       title: createRoomDto.title,
       capacity: 2,
-      currentCount: 1,
+      currentCount: 0,
     });
     return await this.roomRepository.save(room);
   }
@@ -75,17 +75,22 @@ export class RoomService {
       const roomRepo = manager.getRepository(Room);
       const participantRepo = manager.getRepository(RoomParticipant);
 
-      const room = await roomRepo.findOne({
-        where: { id: roomId },
-        relations: ['participants', 'participants.user'],
-        lock: { mode: 'pessimistic_write' },
-      });
+      const room = await roomRepo
+        .createQueryBuilder('room')
+        .setLock('pessimistic_write')
+        .where('room.id = :roomId', { roomId })
+        .getOne();
 
       if (!room) {
         throw new NotFoundException('존재하지 않는 방입니다.');
       }
 
-      const alreadyJoined = room.participants.some(
+      const participants = await participantRepo.find({
+        where: { room: { id: roomId } },
+        relations: ['user'],
+      });
+
+      const alreadyJoined = participants.some(
         (participant) => participant.user.id === userId,
       );
       if (alreadyJoined) {
@@ -97,7 +102,7 @@ export class RoomService {
       }
 
       const role =
-        room.participants.length === 0
+        participants.length === 0
           ? RoomParticipantRole.HOST
           : RoomParticipantRole.MEMBER;
 
@@ -125,17 +130,22 @@ export class RoomService {
       const roomRepo = manager.getRepository(Room);
       const participantRepo = manager.getRepository(RoomParticipant);
 
-      const room = await roomRepo.findOne({
-        where: { id: roomId },
-        relations: ['participants', 'participants.user'],
-        lock: { mode: 'pessimistic_write' },
-      });
+      const room = await roomRepo
+        .createQueryBuilder('room')
+        .setLock('pessimistic_write')
+        .where('room.id = :roomId', { roomId })
+        .getOne();
 
       if (!room) {
         throw new NotFoundException('존재하지 않는 방입니다.');
       }
 
-      const leavingParticipant = room.participants.find(
+      const participants = await participantRepo.find({
+        where: { room: { id: roomId } },
+        relations: ['user'],
+      });
+
+      const leavingParticipant = participants.find(
         (participant) => participant.user.id === userId,
       );
 

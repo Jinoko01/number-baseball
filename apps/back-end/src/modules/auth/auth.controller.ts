@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { GithubCodeDto } from './dto/github-code.dto';
 import { AccessTokenGuard } from 'src/common/guard/access-token.guard';
 import { RefreshTokenGuard } from 'src/common/guard/refresh-token.guard';
-import type { AuthenticatedRequest } from 'src/common/type/requestType';
+import type { AuthenticatedRequest } from 'src/common/type/request.type';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,

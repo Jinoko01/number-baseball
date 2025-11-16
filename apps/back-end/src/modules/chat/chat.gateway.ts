@@ -1,0 +1,190 @@
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import {
+  ConnectedSocket,
+  MessageBody,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  OnGatewayInit,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
+import { AccessTokenPayload } from 'src/common/type/jwy-payload.type';
+import { HomeMessageDto } from './dto/home-message.dto';
+
+interface AuthenticatedSocket extends Socket {
+  data: {
+    userId?: number;
+    username?: string;
+  };
+}
+
+@WebSocketGateway({
+  cors: {
+    origin: ['http://localhost:3000'],
+    credentials: true,
+  },
+  namespace: '/chat',
+})
+export class ChatGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
+  @WebSocketServer()
+  server: Server;
+
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) {}
+
+  afterInit() {
+    console.log('서버 웹소켓 연결');
+  }
+
+  handleConnection(client: AuthenticatedSocket) {
+    try {
+      const cookieHeader = client.handshake.headers.cookie;
+      if (!cookieHeader) {
+        client.disconnect();
+        return;
+      }
+
+      const accessToken = this.extractCookie(cookieHeader, 'accessToken');
+      if (!accessToken) {
+        client.disconnect();
+        return;
+      }
+
+      const payload = this.jwtService.verify<AccessTokenPayload>(accessToken, {
+        secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+      });
+
+      client.data.userId = payload.sub;
+      client.data.username = payload.username;
+    } catch (error) {
+      console.error(`소켓 연결 에러: ${error}`);
+      client.disconnect();
+    }
+  }
+
+  handleDisconnect(client: AuthenticatedSocket) {
+    console.log(`소켓 연결 해제: ${client.id}`);
+  }
+
+  private extractCookie(cookieHeader: string, key: string): string | null {
+    const cookies = cookieHeader.split(';').map((c) => c.trim());
+    const target = cookies.find((c) => c.startsWith(`${key}=`));
+    return target ? decodeURIComponent(target.split('=')[1]) : null;
+  }
+
+  /**
+   * home 입장
+   * home 메시지 전송
+   */
+  @SubscribeMessage('homeJoined')
+  async handleJoinHome(@ConnectedSocket() client: AuthenticatedSocket) {
+    const isValidUser = this.checkValidUser(client);
+    if (!isValidUser) {
+      return;
+    }
+
+    await client.join('home');
+    client.emit('homeJoined');
+  }
+
+  @SubscribeMessage('homeLeave')
+  async handleLeaveHome(@ConnectedSocket() client: AuthenticatedSocket) {
+    const isValidUser = this.checkValidUser(client);
+    if (!isValidUser) {
+      return;
+    }
+
+    await client.leave('home');
+    client.emit('homeLeave');
+  }
+
+  @SubscribeMessage('homeMessage')
+  handleHomeMessage(
+    @MessageBody() data: HomeMessageDto,
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    const isValidUser = this.checkValidUser(client);
+    if (!isValidUser) {
+      return;
+    }
+
+    const payload = {
+      senderId: client.data.userId,
+      senderName: client.data.username,
+      message: data.message,
+      sentAt: new Date().toISOString(),
+    };
+
+    this.server.to('home').emit('homeMessage', payload);
+  }
+
+  /**
+   * room 입장
+   * room 메시지 전송
+   */
+  @SubscribeMessage('roomJoined')
+  async handleJoinGameRoom(
+    @MessageBody() data: { roomId: number },
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    const isValidUser = this.checkValidUser(client);
+    if (!isValidUser) {
+      return;
+    }
+
+    const roomName = `room:${data.roomId}`;
+    await client.join(roomName);
+    client.emit('roomJoined', { roomId: data.roomId });
+  }
+
+  @SubscribeMessage('roomLeave')
+  async handleLeaveGameRoom(
+    @MessageBody() data: { roomId: number },
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    const isValidUser = this.checkValidUser(client);
+    if (!isValidUser) {
+      return;
+    }
+
+    const roomName = `room:${data.roomId}`;
+    await client.leave(roomName);
+    client.emit('roomLeave', { roomId: data.roomId });
+  }
+
+  @SubscribeMessage('roomMessage')
+  handleRoomMessage(
+    @MessageBody() data: { roomId: number; message: string },
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    const isValidUser = this.checkValidUser(client);
+    if (!isValidUser) {
+      return;
+    }
+
+    const payload = {
+      senderId: client.data.userId,
+      senderName: client.data.username,
+      message: data.message,
+      sentAt: new Date().toISOString(),
+    };
+
+    this.server.to(`room:${data.roomId}`).emit('roomMessage', payload);
+  }
+
+  private checkValidUser(client: AuthenticatedSocket) {
+    if (!client.data.userId) {
+      client.emit('error', { message: 'Unauthorized' });
+      client.disconnect();
+      return false;
+    }
+    return true;
+  }
+}

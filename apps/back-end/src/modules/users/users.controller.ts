@@ -2,7 +2,7 @@ import { Controller, UseGuards, Get, Req, Delete } from '@nestjs/common';
 import UsersService from './users.service';
 import { AccessTokenGuard } from 'src/common/guard/access-token.guard';
 import { Users } from '../entities/users.entity';
-import type { AuthenticatedRequest } from 'src/common/type/requestType';
+import type { AuthenticatedRequest } from 'src/common/type/request.type';
 import {
   ApiBearerAuth,
   ApiHeader,
