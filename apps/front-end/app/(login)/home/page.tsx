@@ -17,8 +17,8 @@ export default async function Home({ searchParams }: HomeProps) {
   });
 
   return (
-    <div className='bg-blue-50 min-h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] px-2 py-2'>
-      <div className='flex min-h-[calc((100vh-4rem))] max-h-[calc((100vh-4rem))] gap-2'>
+    <div className='bg-blue-50 min-h-[calc(100vh-4rem-8px)] max-h-[calc(100vh-4rem-8px)] px-2 py-2'>
+      <div className='flex min-h-[calc((100vh-4rem-8px))] max-h-[calc((100vh-4rem-8px))] gap-2'>
         <div className='flex flex-col w-2/3 bg-white rounded-md shadow-sm px-4 pt-2'>
           <header className='flex justify-between items-center'>
             <div className='flex items-center gap-2'>

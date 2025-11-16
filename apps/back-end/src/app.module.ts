@@ -12,6 +12,7 @@ import { ChatModule } from './modules/chat/chat.module';
     ConfigModule.forRoot({
       cache: true,
       isGlobal: true,
+      envFilePath: `.env.${process.env.NODE_ENV || 'local'}`,
       load: [typeorm],
     }),
     TypeOrmModule.forRootAsync({

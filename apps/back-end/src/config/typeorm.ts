@@ -1,6 +1,13 @@
 import 'dotenv/config';
 import { registerAs } from '@nestjs/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
+import * as dotenv from 'dotenv';
+
+dotenv.config({
+  path: `.env.${process.env.NODE_ENV || 'local'}`,
+});
+
+const isProd = process.env.NODE_ENV === 'production';
 
 const config = {
   type: 'postgres',
@@ -9,10 +16,11 @@ const config = {
   username: `${process.env.DB_USERNAME || 'test'}`,
   password: `${process.env.DB_PASSWORD || 'test'}`,
   database: `${process.env.DB_DATABASE || 'test'}`,
-  entities: ['dist/**/**/*.entities{.ts,.js}'],
+  entities: ['dist/**/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/*{.ts,.js}'],
   autoLoadEntities: true,
-  synchronize: true, // 배포 시 false로 변경
+  synchronize: false,
+  ssl: isProd ? { rejectUnauthorized: false } : false,
 };
 
 export default registerAs('typeorm', () => config);

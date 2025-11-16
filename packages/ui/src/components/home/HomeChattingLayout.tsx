@@ -48,7 +48,7 @@ export function HomeChattingLayout() {
   };
 
   return (
-    <div className='flex flex-col bg-white rounded-xl h-full p-2'>
+    <div className='flex flex-col bg-white rounded-xl h-full p-2 gap-2'>
       <div className='flex flex-col flex-1 overflow-auto'>
         <span className='text-sm text-gray-500 font-bold'>전체 채팅에 참여했습니다.</span>
         {messages.map((message) => (
