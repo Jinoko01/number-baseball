@@ -46,9 +46,7 @@ export class RoomService {
       skip,
       take: limit,
       relations: {
-        participants: {
-          user: true,
-        },
+        participants: true,
       },
     });
 
@@ -68,9 +66,7 @@ export class RoomService {
     const room = await this.roomRepository.findOne({
       where: { id },
       relations: {
-        participants: {
-          user: true,
-        },
+        participants: true,
       },
     });
     return room;

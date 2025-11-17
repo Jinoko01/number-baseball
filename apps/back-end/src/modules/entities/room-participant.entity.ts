@@ -27,6 +27,7 @@ export class RoomParticipant {
   @ApiProperty({ description: '참여 유저 정보', type: () => Users })
   @ManyToOne(() => Users, (user) => user.roomParticipants, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   @JoinColumn({ name: 'userId' })
   user: Users;
