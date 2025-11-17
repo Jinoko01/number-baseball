@@ -46,7 +46,6 @@ export class ChatGateway
   handleConnection(client: AuthenticatedSocket) {
     try {
       const accessToken = client.handshake.auth?.token;
-      console.log(accessToken);
       if (!accessToken) {
         client.disconnect();
         console.log('토큰 문제로 인한 연결 해제');
@@ -61,6 +60,7 @@ export class ChatGateway
       client.data.username = payload.username;
     } catch (error) {
       console.error(`소켓 연결 에러: ${error}`);
+      client.emit('error', { message: 'Unauthorized' });
       client.disconnect();
     }
   }

@@ -1,39 +1,42 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getSocket } from '@/lib/utils/socket';
+import { setSocket } from '@/lib/utils/socket';
 import { useRef } from 'react';
 import { Button } from '../common/Button';
-import { getNicknameColor } from 'utils';
+import { getNicknameColor, useSocketStore } from 'utils';
 
 interface HomeChattingLayout {
   accessToken: string;
 }
 
 export function HomeChattingLayout({ accessToken }: HomeChattingLayout) {
+  const { socketClient, setSocketClient } = useSocketStore();
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState('');
   const chattingInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const socket = getSocket(accessToken);
+    const socket = setSocket(accessToken);
+    setSocketClient(socket);
 
     socket.emit('homeJoined');
 
-    socket.on('homeMessage', (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
+    const handleHomeMessage = (message: any) => {
+      setMessages((prev) => [...prev, message]);
+    };
+
+    socket.on('homeMessage', handleHomeMessage);
 
     return () => {
-      socket.off('homeMessage');
+      socket.off('homeMessage', handleHomeMessage);
       socket.emit('homeLeave');
       socket.disconnect();
     };
-  }, []);
+  }, [accessToken]);
 
   const send = () => {
-    const socket = getSocket(accessToken);
-    socket.emit('homeMessage', { message: input });
+    socketClient?.emit('homeMessage', { message: input });
     setInput('');
     chattingInputRef.current?.focus();
   };

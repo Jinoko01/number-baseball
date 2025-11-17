@@ -259,6 +259,9 @@ importers:
 
   packages/utils:
     dependencies:
+      socket.io-client:
+        specifier: ^4.8.1
+        version: 4.8.1
       zustand:
         specifier: ^5.0.8
         version: 5.0.8(@types/react@19.2.0)(react@19.2.0)
