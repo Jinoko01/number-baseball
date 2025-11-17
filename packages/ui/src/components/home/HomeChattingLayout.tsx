@@ -5,7 +5,6 @@ import { getSocket } from '@/lib/utils/socket';
 import { useRef } from 'react';
 import { Button } from '../common/Button';
 import { getNicknameColor } from 'utils';
-import { KeyboardEventHandler } from 'react';
 
 export function HomeChattingLayout() {
   const [messages, setMessages] = useState<any[]>([]);

@@ -48,12 +48,14 @@ export class ChatGateway
       const cookieHeader = client.handshake.headers.cookie;
       if (!cookieHeader) {
         client.disconnect();
+        console.log('쿠키 문제로 인한 연결 해제');
         return;
       }
 
       const accessToken = this.extractCookie(cookieHeader, 'accessToken');
       if (!accessToken) {
         client.disconnect();
+        console.log('토큰 문제로 인한 연결 해제');
         return;
       }
 
