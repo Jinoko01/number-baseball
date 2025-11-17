@@ -54,7 +54,7 @@ export class AuthService {
     const authInfo: AuthInterface = {
       nickname: login,
       avatar: avatar_url,
-      name,
+      name: name ?? login,
       provider: AUTH_PROVIDER.GITHUB,
     };
 
