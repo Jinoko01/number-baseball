@@ -22,9 +22,7 @@ const config = {
   synchronize: false,
   ssl: isProd ? { rejectUnauthorized: false } : false,
   extra: {
-    ssl: {
-      rejectUnauthorized: false,
-    },
+    ssl: isProd ? { rejectUnauthorized: false } : false,
   },
 };
 

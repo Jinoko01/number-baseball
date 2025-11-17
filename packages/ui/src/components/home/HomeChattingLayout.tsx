@@ -6,13 +6,17 @@ import { useRef } from 'react';
 import { Button } from '../common/Button';
 import { getNicknameColor } from 'utils';
 
-export function HomeChattingLayout() {
+interface HomeChattingLayout {
+  accessToken: string;
+}
+
+export function HomeChattingLayout({ accessToken }: HomeChattingLayout) {
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState('');
   const chattingInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const socket = getSocket();
+    const socket = getSocket(accessToken);
 
     socket.emit('homeJoined');
 
@@ -28,7 +32,7 @@ export function HomeChattingLayout() {
   }, []);
 
   const send = () => {
-    const socket = getSocket();
+    const socket = getSocket(accessToken);
     socket.emit('homeMessage', { message: input });
     setInput('');
     chattingInputRef.current?.focus();

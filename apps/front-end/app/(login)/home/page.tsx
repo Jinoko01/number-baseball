@@ -1,5 +1,6 @@
 import { revalidateHomeAction } from '@/lib/actions/revalidateGameRoomAction';
 import { getRooms } from '@/lib/apis/room/getRooms';
+import { getCookie } from '@/lib/utils/next-cookie';
 import { Button, CreateRoomDialog, HomeChattingLayout, Pagination, RoomCard } from 'ui';
 
 interface HomeProps {
@@ -10,6 +11,7 @@ interface HomeProps {
 }
 
 export default async function Home({ searchParams }: HomeProps) {
+  const accessToken = await getCookie('accessToken');
   const params = await searchParams;
   const rooms = await getRooms({
     page: Number(params.page ?? 1),
@@ -49,7 +51,7 @@ export default async function Home({ searchParams }: HomeProps) {
           </div>
         </div>
         <div className='w-1/3'>
-          <HomeChattingLayout />
+          <HomeChattingLayout accessToken={accessToken as string} />
         </div>
       </div>
     </div>
