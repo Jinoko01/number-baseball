@@ -16,8 +16,12 @@ const config = {
   username: `${process.env.DB_USERNAME || 'test'}`,
   password: `${process.env.DB_PASSWORD || 'test'}`,
   database: `${process.env.DB_DATABASE || 'test'}`,
-  entities: ['dist/**/**/*.entity{.ts,.js}'],
-  migrations: ['dist/migrations/*{.ts,.js}'],
+  entities: isProd
+    ? ['dist/**/*.entity{.js,.ts}']
+    : ['src/**/*.entity{.ts,.js}'],
+  migrations: isProd
+    ? ['dist/migrations/*{.js,.ts}']
+    : ['src/migrations/*{.ts,.js}'],
   autoLoadEntities: true,
   synchronize: false,
   ssl: isProd ? { rejectUnauthorized: false } : false,
