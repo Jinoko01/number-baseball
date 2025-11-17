@@ -1,4 +1,5 @@
 import { githubAuth } from '@/lib/apis/auth/githubAuth';
+import { setResponseTokenCookie } from '@/lib/utils/routeFuntions';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -10,20 +11,7 @@ export async function GET(req: NextRequest) {
   const redirectUrl = new URL('/home', req.url);
   const response = NextResponse.redirect(redirectUrl);
 
-  response.cookies.set('accessToken', tokens.accessToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 60 * 60,
-  });
-  response.cookies.set('refreshToken', tokens.refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 14,
-  });
+  setResponseTokenCookie(response, tokens.accessToken, tokens.refreshToken);
 
   return response;
 }

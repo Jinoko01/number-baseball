@@ -4,6 +4,7 @@ import { fetchUtil } from 'utils';
 import { getHeaders } from '../getHeaders';
 import { RemoveApiPath } from '../removeApiPath';
 import { refreshToken } from '@/lib/actions/refreshToken';
+import { setResponseTokenCookie } from '@/lib/utils/routeFuntions';
 
 type FetchArgs = {
   url: string;
@@ -13,29 +14,43 @@ type FetchArgs = {
 };
 
 function isUnauthorized(res: NextResponse) {
-  return res?.status === 401;
+  return res.statusCode === 401;
 }
 
 export async function requestWithRefresh(args: FetchArgs) {
   const result = await fetchUtil(args);
 
   if (!isUnauthorized(result)) {
-    return result;
+    return {
+      body: result,
+      newAccessToken: null,
+      newRefreshToken: null,
+    };
   }
 
-  try {
-    const refreshResult = await refreshToken();
+  const refreshResult = await refreshToken();
+  console.log(refreshResult);
 
-    if (!refreshResult) {
-      return result;
-    }
-  } catch (e) {
-    console.error('refreshToken 실패:', e);
-    return result;
+  if (!refreshResult) {
+    return {
+      body: result,
+      newAccessToken: null,
+      newRefreshToken: null,
+    };
   }
 
-  const retryResult = await fetchUtil(args);
-  return retryResult;
+  const headers = getHeaders(refreshResult.accessToken);
+
+  const retryResult = await fetchUtil({
+    ...args,
+    headers,
+  });
+
+  return {
+    body: retryResult,
+    newAccessToken: refreshResult.accessToken,
+    newRefreshToken: refreshResult.refreshToken,
+  };
 }
 
 export async function GET(req: NextRequest) {
@@ -47,13 +62,20 @@ export async function GET(req: NextRequest) {
     : undefined;
   const headers = getHeaders(accessToken);
 
-  const response = await requestWithRefresh({
+  const { body, newAccessToken, newRefreshToken } = await requestWithRefresh({
     url: `${API_BASE_URL}${path}${search}`,
     method: 'GET',
     headers: { ...headers },
   });
 
-  return NextResponse.json(response);
+  const res = NextResponse.json(body);
+
+  if (newAccessToken && newRefreshToken) {
+    console.log(newAccessToken);
+    setResponseTokenCookie(res, newAccessToken, newRefreshToken);
+  }
+
+  return res;
 }
 
 export async function POST(req: NextRequest) {
@@ -64,21 +86,27 @@ export async function POST(req: NextRequest) {
     ? authHeader.slice('Bearer '.length)
     : undefined;
   const headers = getHeaders(accessToken);
-  let body = undefined;
+  let bodyData = undefined;
   try {
-    body = await req.json();
+    bodyData = await req.json();
   } catch (e) {
-    body = undefined;
+    bodyData = undefined;
   }
 
-  const response = await requestWithRefresh({
+  const { body, newAccessToken, newRefreshToken } = await requestWithRefresh({
     url: `${API_BASE_URL}${path}${search}`,
     method: 'POST',
     headers: { ...headers },
-    ...(body !== undefined ? { body } : {}),
+    ...(bodyData !== undefined ? { body: bodyData } : {}),
   });
 
-  return NextResponse.json(response);
+  const res = NextResponse.json(body);
+
+  if (newAccessToken && newRefreshToken) {
+    setResponseTokenCookie(res, newAccessToken, newRefreshToken);
+  }
+
+  return res;
 }
 
 export async function PUT(req: NextRequest) {
@@ -89,16 +117,27 @@ export async function PUT(req: NextRequest) {
     ? authHeader.slice('Bearer '.length)
     : undefined;
   const headers = getHeaders(accessToken);
-  const body = await req.json();
+  let bodyData = undefined;
+  try {
+    bodyData = await req.json();
+  } catch (e) {
+    bodyData = undefined;
+  }
 
-  const response = await requestWithRefresh({
+  const { body, newAccessToken, newRefreshToken } = await requestWithRefresh({
     url: `${API_BASE_URL}${path}${search}`,
-    method: 'PUT',
+    method: 'POST',
     headers: { ...headers },
-    body,
+    ...(bodyData !== undefined ? { body: bodyData } : {}),
   });
 
-  return NextResponse.json(response);
+  const res = NextResponse.json(body);
+
+  if (newAccessToken && newRefreshToken) {
+    setResponseTokenCookie(res, newAccessToken, newRefreshToken);
+  }
+
+  return res;
 }
 
 export async function PATCH(req: NextRequest) {
@@ -109,16 +148,27 @@ export async function PATCH(req: NextRequest) {
     ? authHeader.slice('Bearer '.length)
     : undefined;
   const headers = getHeaders(accessToken);
-  const body = await req.json();
+  let bodyData = undefined;
+  try {
+    bodyData = await req.json();
+  } catch (e) {
+    bodyData = undefined;
+  }
 
-  const response = await requestWithRefresh({
+  const { body, newAccessToken, newRefreshToken } = await requestWithRefresh({
     url: `${API_BASE_URL}${path}${search}`,
-    method: 'PATCH',
+    method: 'POST',
     headers: { ...headers },
-    body,
+    ...(bodyData !== undefined ? { body: bodyData } : {}),
   });
 
-  return NextResponse.json(response);
+  const res = NextResponse.json(body);
+
+  if (newAccessToken && newRefreshToken) {
+    setResponseTokenCookie(res, newAccessToken, newRefreshToken);
+  }
+
+  return res;
 }
 
 export async function DELETE(req: NextRequest) {
@@ -130,11 +180,17 @@ export async function DELETE(req: NextRequest) {
     : undefined;
   const headers = getHeaders(accessToken);
 
-  const response = await requestWithRefresh({
+  const { body, newAccessToken, newRefreshToken } = await requestWithRefresh({
     url: `${API_BASE_URL}${path}${search}`,
     method: 'DELETE',
     headers: { ...headers },
   });
 
-  return NextResponse.json(response);
+  const res = NextResponse.json(body);
+
+  if (newAccessToken && newRefreshToken) {
+    setResponseTokenCookie(res, newAccessToken, newRefreshToken);
+  }
+
+  return res;
 }

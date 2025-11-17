@@ -9,29 +9,23 @@ interface RoomPageProps {
 
 export default async function RoomPage({ params }: RoomPageProps) {
   const { roomId } = await params;
-  const room = await getRoomById({ roomId: Number(roomId) });
+  const { participantIds } = await getRoomById({ roomId: Number(roomId) });
 
   return (
     <main className='bg-blue-50 min-h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] px-2 py-2'>
       <div className='flex justify-between items-center'>
-        <UserCard
-          user={{
-            id: 1,
-            name: '플레이어 1',
-            nickname: '플레이어 1',
-            avatar: '',
-            provider: 'GITHUB',
-          }}
-        />
-        <UserCard
-          user={{
-            id: 2,
-            name: '플레이어 2',
-            nickname: '플레이어 2',
-            avatar: '',
-            provider: 'GITHUB',
-          }}
-        />
+        {participantIds.map((participantId) => (
+          <UserCard
+            key={participantId}
+            user={{
+              id: 1,
+              name: '플레이어 1',
+              nickname: '플레이어 1',
+              avatar: '',
+              provider: 'GITHUB',
+            }}
+          />
+        ))}
       </div>
       <div>게임 내용을 출력하는 공간</div>
     </main>

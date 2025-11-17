@@ -47,8 +47,6 @@ async function checkTokenExpired(req: NextRequest): Promise<NextResponse | null>
   if (accessToken && _refreshToken && isValidAccessToken(accessToken.value)) {
     try {
       const res = await refreshToken();
-      req.cookies.set('accessToken', res.accessToken);
-      req.cookies.set('refreshToken', res.refreshToken);
 
       const response = NextResponse.redirect(new URL(req.nextUrl.pathname, req.url));
       return setResponseTokenCookie(response, res.accessToken, res.refreshToken);
