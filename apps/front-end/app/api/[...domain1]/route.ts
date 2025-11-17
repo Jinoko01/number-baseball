@@ -30,13 +30,18 @@ export async function POST(req: NextRequest) {
     ? authHeader.slice('Bearer '.length)
     : undefined;
   const headers = getHeaders(accessToken);
-  const body = await req.json();
+  let body = undefined;
+  try {
+    body = await req.json(); // body가 없으면 여기서 에러 → catch에서 undefined로 처리
+  } catch (e) {
+    body = undefined;
+  }
 
   const response = await fetchUtil({
     url: `${API_BASE_URL}${path}${search}`,
     method: 'POST',
     headers: { ...headers },
-    body,
+    ...(body !== undefined ? { body } : {}),
   });
 
   return NextResponse.json(response);
