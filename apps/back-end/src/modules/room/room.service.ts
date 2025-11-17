@@ -45,6 +45,9 @@ export class RoomService {
       order: { createdAt: 'DESC' },
       skip,
       take: limit,
+      relations: {
+        participants: true,
+      },
     });
 
     const totalPages = Math.max(Math.ceil(total / limit), 1);
@@ -60,7 +63,12 @@ export class RoomService {
   }
 
   async findOne(id: number): Promise<Room | null> {
-    const room = await this.roomRepository.findOne({ where: { id } });
+    const room = await this.roomRepository.findOne({
+      where: { id },
+      relations: {
+        participants: true,
+      },
+    });
     return room;
   }
 
