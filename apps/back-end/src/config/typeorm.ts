@@ -23,10 +23,10 @@ const config = {
     ? ['dist/migrations/*{.js,.ts}']
     : ['src/migrations/*{.ts,.js}'],
   autoLoadEntities: true,
-  synchronize: false,
-  ssl: isProd ? { rejectUnauthorized: false } : false,
+  synchronize: true,
+  ssl: { rejectUnauthorized: false },
   extra: {
-    ssl: isProd ? { rejectUnauthorized: false } : false,
+    ssl: { rejectUnauthorized: false },
   },
 };
 
