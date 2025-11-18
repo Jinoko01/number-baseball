@@ -13,7 +13,7 @@ type FetchArgs = {
   body?: unknown;
 };
 
-function isUnauthorized(res: NextResponse) {
+function isUnauthorized(res: { [key: string]: unknown }) {
   return res.statusCode === 401;
 }
 
@@ -29,7 +29,6 @@ export async function requestWithRefresh(args: FetchArgs) {
   }
 
   const refreshResult = await refreshToken();
-  console.log(refreshResult);
 
   if (!refreshResult) {
     return {

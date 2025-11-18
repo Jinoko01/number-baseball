@@ -14,7 +14,7 @@
     "create:module": "nest generate module",
     "create:resource": "nest generate resource",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "cross-env NODE_ENV=production nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "NODE_ENV=production forever start dist/main.js",
     "stop:prod": "forever stop dist/main.js",

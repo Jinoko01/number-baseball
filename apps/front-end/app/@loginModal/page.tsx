@@ -1,7 +1,6 @@
 'use client';
 
 import { GithubLoginButton, Modal } from 'ui';
-import LogoImage from '@/assets/logo.webp';
 import Image from 'next/image';
 import { useLogin } from 'utils';
 
@@ -13,7 +12,7 @@ export default function LoginModal() {
       <Modal
         header={
           <div className='flex flex-col items-center gap-2'>
-            <Image src={LogoImage} alt='로고' width={100} height={100} />
+            <Image src='/assets/logo.webp' alt='로고' width={100} height={100} />
             <h1 className='text-2xl font-bold'>숫자 야구 게임</h1>
           </div>
         }
