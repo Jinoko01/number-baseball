@@ -157,7 +157,10 @@ export class ChatGateway
 
     const roomName = `room:${data.roomId}`;
     await client.leave(roomName);
-    this.server.to(roomName).emit('roomLeave');
+
+    const participants = await this.roomService.getParticipants(data.roomId);
+
+    this.server.to(roomName).emit('roomJoined', participants);
   }
 
   @SubscribeMessage('roomMessage')

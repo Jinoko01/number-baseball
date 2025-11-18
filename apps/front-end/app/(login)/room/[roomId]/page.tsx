@@ -1,7 +1,7 @@
 import { getMyProfile } from '@/lib/actions/getMyProfile';
 import { getRoomById } from '@/lib/apis/room/getRoomById';
 import { getCookie } from '@/lib/utils/next-cookie';
-import { RoomUserSection } from 'ui';
+import { GameContextContainer, RoomUserSection } from 'ui';
 
 interface RoomPageProps {
   params: Promise<{
@@ -16,14 +16,14 @@ export default async function RoomPage({ params }: RoomPageProps) {
   const { participants } = await getRoomById({ roomId: Number(roomId) });
 
   return (
-    <main className='bg-blue-50 min-h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] px-2 py-4'>
+    <main className='bg-blue-50 min-h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] px-2 py-4 flex flex-col items-center gap-8'>
       <RoomUserSection
         roomId={Number(roomId)}
         _participants={participants}
         accessToken={accessToken as string}
         user={myInfo}
       />
-      <div>게임 내용을 출력하는 공간</div>
+      <GameContextContainer roomId={Number(roomId)} />
     </main>
   );
 }

@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { setSocket } from '@/lib/utils/socket';
 import { revalidateRoomDetailAction } from '@/lib/actions/revalidateRoomDetailAction';
 import { useState } from 'react';
+import { leaveRoomAction } from '@/lib/actions/leaveRoom';
 
 interface RoomUserSectionProps {
   roomId: number;
@@ -30,10 +31,14 @@ export function RoomUserSection({
 
   useEffect(() => {
     const socket = setSocket(accessToken);
+    setSocketClient(socket);
 
     socket.on('roomJoined', (participants: RoomParticipants[]) => {
-      console.log('상대가 들어옴');
-      console.log(participants);
+      setParticipants(participants);
+      revalidateRoomDetailAction(roomId);
+    });
+
+    socket.on('roomLeave', (participants: RoomParticipants[]) => {
       setParticipants(participants);
       revalidateRoomDetailAction(roomId);
     });
@@ -41,16 +46,18 @@ export function RoomUserSection({
     socket.emit('roomJoined', { roomId, user });
 
     return () => {
+      socket.emit('roomLeave', { roomId });
+      leaveRoomAction(roomId);
       socket.disconnect();
     };
-  }, [socketClient]);
+  }, []);
 
   if (!participants) {
     return null;
   }
 
   return (
-    <div className='flex justify-evenly items-center'>
+    <div className='flex justify-evenly items-center w-full'>
       <UserCard
         user={
           participants[0] && {

@@ -2,7 +2,7 @@ import { User } from 'utils';
 import Image from 'next/image';
 
 const STYLE = {
-  CARD: 'bg-white shadow-xl aspect-square p-8 rounded-2xl border flex flex-col gap-4 items-center justify-center w-[180px] h-[180px]',
+  CARD: 'shadow-md aspect-square p-8 rounded-2xl border-blue-300 bg-linear-to-br from-white to-blue-50 border-3 flex flex-col gap-4 items-center justify-center w-[180px] h-[180px]',
   IMAGE: 'mx-auto rounded-full overflow-hidden border shadow-md width-[52px] height-[52px]',
   CONTENT: 'flex items-center justify-center',
   NAME: 'font-bold text-lg',
