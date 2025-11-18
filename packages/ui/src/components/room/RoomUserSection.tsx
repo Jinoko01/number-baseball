@@ -8,6 +8,7 @@ import { setSocket } from '@/lib/utils/socket';
 import { revalidateRoomDetailAction } from '@/lib/actions/revalidateRoomDetailAction';
 import { useState } from 'react';
 import { leaveRoomAction } from '@/lib/actions/leaveRoom';
+import { useRef } from 'react';
 
 interface RoomUserSectionProps {
   roomId: number;
@@ -28,6 +29,7 @@ export function RoomUserSection({
 }: RoomUserSectionProps) {
   const { socketClient, setSocketClient } = useSocketStore();
   const [participants, setParticipants] = useState(_participants);
+  const cleanupCalledRef = useRef(false);
 
   useEffect(() => {
     const socket = setSocket(accessToken);
@@ -46,9 +48,16 @@ export function RoomUserSection({
     socket.emit('roomJoined', { roomId, user });
 
     return () => {
-      socket.emit('roomLeave', { roomId });
-      leaveRoomAction(roomId);
-      socket.disconnect();
+      if (!cleanupCalledRef.current) {
+        cleanupCalledRef.current = true;
+        return;
+      }
+
+      (async () => {
+        await leaveRoomAction(roomId);
+        socket.emit('roomLeave', { roomId });
+        socket.disconnect();
+      })();
     };
   }, []);
 
