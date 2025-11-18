@@ -13,6 +13,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { AccessTokenPayload } from 'src/common/type/jwy-payload.type';
 import { HomeMessageDto } from './dto/home-message.dto';
+import { RoomService } from '../room/room.service';
 
 interface AuthenticatedSocket extends Socket {
   data: {
@@ -37,6 +38,7 @@ export class ChatGateway
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly roomService: RoomService,
   ) {}
 
   afterInit() {
@@ -137,7 +139,10 @@ export class ChatGateway
 
     const roomName = `room:${data.roomId}`;
     await client.join(roomName);
-    client.emit('roomJoined', { roomId: data.roomId });
+
+    const participants = await this.roomService.getParticipants(data.roomId);
+
+    this.server.to(roomName).emit('roomJoined', participants);
   }
 
   @SubscribeMessage('roomLeave')
@@ -152,7 +157,7 @@ export class ChatGateway
 
     const roomName = `room:${data.roomId}`;
     await client.leave(roomName);
-    client.emit('roomLeave', { roomId: data.roomId });
+    this.server.to(roomName).emit('roomLeave');
   }
 
   @SubscribeMessage('roomMessage')

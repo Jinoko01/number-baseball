@@ -76,6 +76,14 @@ export class RoomService {
     return room;
   }
 
+  async getParticipants(roomId: number) {
+    const participants = await this.roomParticipant.find({
+      where: { room: { id: roomId } },
+      relations: ['user'],
+    });
+    return participants;
+  }
+
   async joinRoom(roomId: number, userId: number) {
     const user = await this.usersRepository.findOne({ where: { id: userId } });
 
