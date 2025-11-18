@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "peerDependencies": {
-    "zustand": "^5.0.8"
+    "zustand": "^5.0.8",
+    "next": "16.0.1"
   },
   "keywords": [],
   "author": "",

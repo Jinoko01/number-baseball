@@ -10,7 +10,12 @@ export default async function HomeLayout({ children }: HomeLayoutInterface) {
 
   return (
     <div>
-      <Header nickname={myProfile.nickname} avatar={myProfile.avatar} />
+      <Header
+        logoUrl={'/assets/logo.webp'}
+        defaultProfileUrl={'/assets/defaultProfile.webp'}
+        nickname={myProfile.nickname}
+        avatar={myProfile.avatar}
+      />
       {children}
     </div>
   );

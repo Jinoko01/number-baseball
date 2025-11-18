@@ -21,7 +21,7 @@ export default function LoginModal() {
           <div className='flex flex-col items-center justify-center gap-1'>
             <p className='text-sm text-gray-600'>로그인 수단을 선택하세요.</p>
             <div className='flex justify-center gap-8'>
-              <GithubLoginButton onClick={handleGithubLogin} />
+              <GithubLoginButton logoUrl={'/assets/githubLogo.svg'} onClick={handleGithubLogin} />
             </div>
           </div>
         }
