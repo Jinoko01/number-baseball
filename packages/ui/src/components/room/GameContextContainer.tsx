@@ -45,7 +45,7 @@ export function GameContextContainer({ roomId }: GameContextContainerProps) {
   }, [socketClient]);
 
   return (
-    <div className='flex flex-col bg-white rounded-md h-full p-2 gap-2 shadow-md border-3 border-blue-200 max-w-3xl w-full min-h-48'>
+    <div className='flex flex-col bg-white rounded-md h-full p-2 gap-2 shadow-md border-3 border-blue-200 max-w-3xl w-full min-h-48 max-h-48 overflow-auto'>
       <div className='flex flex-col flex-1 overflow-auto'>
         {contexts.map((context) => (
           <div key={context.sentAt} className=' text-sm font-semibold'>
