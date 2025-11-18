@@ -12,5 +12,6 @@ export async function getRoomById({ roomId, headers }: GetRoomRequest): Promise<
     url: `${API_ROUTE_URL}/room/${roomId}`,
     method: 'GET',
     headers,
+    tags: [`room:${roomId}`],
   });
 }

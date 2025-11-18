@@ -8,13 +8,23 @@ interface FetchUtilInterface {
   method: Method;
   headers?: HeadersInit;
   body?: unknown;
+  tags?: string[];
 }
 
-export async function fetchUtil({ url, method, headers = BASIC_HEADER, body }: FetchUtilInterface) {
+export async function fetchUtil({
+  url,
+  method,
+  headers = BASIC_HEADER,
+  body,
+  tags = [],
+}: FetchUtilInterface) {
   const response = await fetch(url, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
+    next: {
+      tags: [...tags],
+    },
     credentials: 'include',
   });
   const data = await response.json();

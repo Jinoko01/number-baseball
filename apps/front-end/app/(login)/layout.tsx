@@ -1,6 +1,4 @@
 import { getMyProfile } from '@/lib/actions/getMyProfile';
-import { getCookie } from '@/lib/utils/next-cookie';
-import { redirect } from 'next/navigation';
 import { Header } from 'ui';
 
 interface HomeLayoutInterface {
@@ -8,13 +6,7 @@ interface HomeLayoutInterface {
 }
 
 export default async function HomeLayout({ children }: HomeLayoutInterface) {
-  const accessToken = await getCookie('accessToken');
-
-  if (!accessToken) {
-    return redirect('/');
-  }
-
-  const myProfile = await getMyProfile(accessToken);
+  const myProfile = await getMyProfile();
 
   return (
     <div>

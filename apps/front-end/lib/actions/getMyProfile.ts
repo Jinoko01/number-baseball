@@ -2,15 +2,23 @@
 
 import { fetchUtil } from 'utils';
 import { API_ROUTE_URL } from '../constants/api';
+import { getCookie } from '../utils/next-cookie';
+import { getHeaders } from '@/app/api/getHeaders';
 
-export async function getMyProfile(accessToken: string) {
+interface MyInfo {
+  id: number;
+  nickname: string;
+  avatar: string;
+}
+
+export async function getMyProfile(): Promise<MyInfo> {
+  const accessToken = await getCookie('accessToken');
+  const headers = getHeaders(accessToken);
+
   const profile = await fetchUtil({
     url: `${API_ROUTE_URL}/users/me`,
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
+    headers,
   });
 
   return await profile;
