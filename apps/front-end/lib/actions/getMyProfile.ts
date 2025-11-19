@@ -1,6 +1,6 @@
 'use server';
 
-import { fetchUtil } from 'utils';
+import { fetchUtil } from '@/lib/utils/fetchUtil';
 import { API_ROUTE_URL } from '../constants/api';
 import { getCookie } from '../utils/next-cookie';
 import { getHeaders } from '@/app/api/getHeaders';

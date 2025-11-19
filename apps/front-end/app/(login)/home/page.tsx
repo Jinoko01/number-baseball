@@ -29,14 +29,14 @@ export default async function Home({ searchParams }: HomeProps) {
             </div>
             <div className='flex items-center gap-2'>
               <form action={revalidateHomeAction}>
-                <Button size='sm' variant='outline'>
+                <Button size='sm' variant='outline' type='submit'>
                   <span className='text-xs font-semibold'>새로고침</span>
                 </Button>
               </form>
               <CreateRoomDialog />
             </div>
           </header>
-          <ul className='flex-1 grid grid-cols-2 grid-rows-[repeat(5,minmax(0,1fr))] grid-flow-col gap-2 pt-2'>
+          <ul className='flex-1 grid grid-cols-2 grid-rows-5 grid-flow-col gap-2 pt-2'>
             {rooms.items.map((room) => (
               <RoomCard key={room.id} room={room} />
             ))}

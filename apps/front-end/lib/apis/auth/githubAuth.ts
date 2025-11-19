@@ -1,5 +1,5 @@
 import { API_ROUTE_URL } from '@/lib/constants/api';
-import { fetchUtil } from 'utils';
+import { fetchUtil } from '@/lib/utils/fetchUtil';
 
 export async function githubAuth({ code }: { code: string }) {
   return await fetchUtil({

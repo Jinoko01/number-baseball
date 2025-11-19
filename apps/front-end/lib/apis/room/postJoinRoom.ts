@@ -1,4 +1,4 @@
-import { fetchUtil } from 'utils';
+import { fetchUtil } from '@/lib/utils/fetchUtil';
 import { API_ROUTE_URL } from '../../constants/api';
 import type { Room } from 'utils';
 

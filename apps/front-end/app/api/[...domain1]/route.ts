@@ -1,6 +1,6 @@
 import { API_BASE_URL } from '@/lib/constants/api';
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchUtil } from 'utils';
+import { fetchUtil } from '@/lib/utils/fetchUtil';
 import { getHeaders } from '../getHeaders';
 import { RemoveApiPath } from '../removeApiPath';
 import { refreshToken } from '@/lib/actions/refreshToken';
