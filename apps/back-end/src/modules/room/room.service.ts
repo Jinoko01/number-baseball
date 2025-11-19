@@ -179,28 +179,34 @@ export class RoomService {
       await participantRepo.delete({ id: leavingParticipant.id });
 
       room.currentCount = Math.max(0, room.currentCount - 1);
-      await roomRepo.save(room);
 
-      if (leavingWasHost) {
-        const remainingParticipants = await participantRepo.find({
-          where: { room: { id: roomId } },
-          relations: ['user'],
-          order: { joinedAt: 'ASC' },
+      if (room.currentCount > 0) {
+        await roomRepo.save(room);
+
+        if (leavingWasHost) {
+          const remainingParticipants = await participantRepo.find({
+            where: { room: { id: roomId } },
+            relations: ['user'],
+            order: { joinedAt: 'ASC' },
+          });
+
+          if (remainingParticipants.length > 0) {
+            const newHost = remainingParticipants[0];
+            newHost.role = RoomParticipantRole.HOST;
+            await participantRepo.save(newHost);
+          }
+        }
+
+        const updatedRoom = await roomRepo.findOne({
+          where: { id: roomId },
+          relations: ['participants', 'participants.user'],
         });
 
-        if (remainingParticipants.length > 0) {
-          const newHost = remainingParticipants[0];
-          newHost.role = RoomParticipantRole.HOST;
-          await participantRepo.save(newHost);
-        }
+        return updatedRoom;
+      } else {
+        await roomRepo.delete({ id: roomId });
+        return { message: '모든 인원이 퇴장하여 방이 삭제되었습니다.' };
       }
-
-      const updatedRoom = await roomRepo.findOne({
-        where: { id: roomId },
-        relations: ['participants', 'participants.user'],
-      });
-
-      return updatedRoom;
     });
   }
 

@@ -141,7 +141,7 @@ export class RoomController {
   async leaveRoom(
     @Param('id', ParseIntPipe) roomId: number,
     @Req() req: AuthenticatedRequest,
-  ): Promise<Room | null> {
+  ): Promise<Room | { message: string } | null> {
     const userId = req.user['sub'];
     return await this.roomService.leaveRoom(roomId, Number(userId));
   }
