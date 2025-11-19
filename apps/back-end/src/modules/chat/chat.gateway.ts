@@ -24,7 +24,10 @@ interface AuthenticatedSocket extends Socket {
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:3000'],
+    origin: [
+      'http://localhost:3000',
+      'https://number-baseball-front-end.vercel.app',
+    ],
     credentials: true,
   },
   namespace: '/chat',
