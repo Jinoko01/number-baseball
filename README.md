@@ -20,8 +20,7 @@
  
 ### 시스템 구조도
 
-<img width="939" height="291" alt="image" src="https://github.com/user-attachments/assets/0c9b0197-560d-4156-b2a1-11fcb94d1447" />
-
+<img width="746" height="231" alt="image" src="https://github.com/user-attachments/assets/7425f745-6cf5-4437-9284-39648f418ad6" />
 
 ---
 
