@@ -17,7 +17,7 @@ export function HomeChattingLayout({ accessToken }: HomeChattingLayout) {
   const chattingInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const socket = setSocket(accessToken);
+    const socket = setSocket({ path: '/chat', accessToken });
     setSocketClient(socket);
 
     socket.emit('homeJoined');

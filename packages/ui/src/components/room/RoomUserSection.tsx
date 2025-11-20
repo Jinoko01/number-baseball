@@ -9,6 +9,7 @@ import { revalidateRoomDetailAction } from '@/lib/actions/revalidateRoomDetailAc
 import { useState } from 'react';
 import { leaveRoomAction } from '@/lib/actions/leaveRoom';
 import { useRef } from 'react';
+import { revalidateHomeAction } from '@/lib/actions/revalidateGameRoomAction';
 
 interface RoomUserSectionProps {
   roomId: number;
@@ -38,7 +39,7 @@ export function RoomUserSection({
   };
 
   useEffect(() => {
-    const socket = setSocket(accessToken);
+    const socket = setSocket({ path: '/chat', accessToken });
     setSocketClient(socket);
 
     socket.on('roomJoined', (participants: RoomParticipants[]) => {
@@ -67,6 +68,7 @@ export function RoomUserSection({
       (async () => {
         await leaveRoomAction(roomId);
         socket.emit('roomLeave', { roomId });
+        await revalidateHomeAction();
         socket.disconnect();
       })();
     };
