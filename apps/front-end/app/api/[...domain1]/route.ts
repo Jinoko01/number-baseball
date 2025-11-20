@@ -70,7 +70,6 @@ export async function GET(req: NextRequest) {
   const res = NextResponse.json(body);
 
   if (newAccessToken && newRefreshToken) {
-    console.log(newAccessToken);
     setResponseTokenCookie(res, newAccessToken, newRefreshToken);
   }
 
