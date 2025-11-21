@@ -9,7 +9,17 @@ import {
   Req,
 } from '@nestjs/common';
 import { GameService } from './game.service';
-import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiHeader,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/common/guard/access-token.guard';
 import type { AuthenticatedRequest } from 'src/common/type/request.type';
 
@@ -26,6 +36,10 @@ export class GameController {
     description: 'Bearer token',
     required: true,
   })
+  @ApiOperation({ summary: '숫자 야구 번호 설정' })
+  @ApiCreatedResponse({ description: '설정 성공' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiNotFoundResponse({ description: '존재하지 않는 방입니다.' })
   async setNumbers(
     @Param('id', ParseIntPipe) roomId: number,
     @Body() body: { userId: number; numbers: number[] },
@@ -41,6 +55,10 @@ export class GameController {
     description: 'Bearer token',
     required: true,
   })
+  @ApiOperation({ summary: '숫자 야구 번호 반환' })
+  @ApiOkResponse({ description: '반환 성공', example: [1, 2, 3, 4] })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiNotFoundResponse({ description: '존재하지 않는 방입니다.' })
   async getNumbers(
     @Param('id', ParseIntPipe) roomId: number,
     @Req() req: AuthenticatedRequest,
@@ -58,6 +76,14 @@ export class GameController {
     description: 'Bearer token',
     required: true,
   })
+  @ApiOperation({ summary: '숫자 야구 추측 결과 반환' })
+  @ApiCreatedResponse({
+    description: '추측 성공',
+    example: { strike: 1, ball: 1, out: 2 },
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiNotFoundResponse({ description: '존재하지 않는 방입니다.' })
+  @ApiBadRequestResponse({ description: '숫자 4개를 입력해야 합니다.' })
   async guess(
     @Param('id', ParseIntPipe) roomId: number,
     @Body() body: { enemyId: number; numbers: number[] },
