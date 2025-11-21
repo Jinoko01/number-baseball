@@ -42,9 +42,15 @@ export class GameController {
   @ApiNotFoundResponse({ description: '존재하지 않는 방입니다.' })
   async setNumbers(
     @Param('id', ParseIntPipe) roomId: number,
-    @Body() body: { userId: number; numbers: number[] },
+    @Req() req: AuthenticatedRequest,
+    @Body() body: { numbers: number[] },
   ) {
-    return await this.gameService.setNumbers(roomId, body.userId, body.numbers);
+    const userId = req.user['sub'];
+    return await this.gameService.setNumbers(
+      roomId,
+      Number(userId),
+      body.numbers,
+    );
   }
 
   @Get(':id')
