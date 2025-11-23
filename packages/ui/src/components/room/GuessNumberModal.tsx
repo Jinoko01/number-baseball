@@ -3,15 +3,16 @@
 import { Modal } from '../common/Modal';
 import { Input } from '../../../@workspace/ui/components/input';
 import { useState } from 'react';
-import { postSetNumbers } from '@/lib/apis/game/postSetNumbers';
+import { postGuess } from '@/lib/apis/game/postGuess';
 
-interface SettingNumberModalProps {
+interface GuessNumberModalProps {
   roomId: number;
+  enemyId: number;
   onClose: () => void;
   onSubmitted?: () => void;
 }
 
-export function SettingNumberModal({ roomId, onClose, onSubmitted }: SettingNumberModalProps) {
+export function GuessNumberModal({ roomId, enemyId, onClose, onSubmitted }: GuessNumberModalProps) {
   const [value, setValue] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -43,15 +44,13 @@ export function SettingNumberModal({ roomId, onClose, onSubmitted }: SettingNumb
       .replace(/\D/g, '')
       .split('')
       .map((c) => Number(c));
+
     try {
-      await postSetNumbers({
-        roomId,
-        numbers,
-      });
+      await postGuess({ roomId, enemyId, numbers });
       onSubmitted?.();
       onClose();
     } catch (e) {
-      setError('설정 중 오류가 발생했습니다.');
+      setError('추측 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -59,7 +58,7 @@ export function SettingNumberModal({ roomId, onClose, onSubmitted }: SettingNumb
 
   return (
     <Modal
-      header={<h1>번호 설정</h1>}
+      header={<h1>번호 추측</h1>}
       body={
         <div className='flex flex-col gap-2'>
           <Input
@@ -81,7 +80,7 @@ export function SettingNumberModal({ roomId, onClose, onSubmitted }: SettingNumb
             className='px-3 py-2 rounded-md bg-blue-600 text-white'
             onClick={onSubmit}
           >
-            {loading ? '저장중...' : '저장'}
+            {loading ? '제출중...' : '제출'}
           </button>
         </div>
       }

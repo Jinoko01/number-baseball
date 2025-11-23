@@ -90,6 +90,9 @@ export class GameController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiNotFoundResponse({ description: '존재하지 않는 방입니다.' })
   @ApiBadRequestResponse({ description: '숫자 4개를 입력해야 합니다.' })
+  @ApiBadRequestResponse({
+    description: '중복되지 않은 숫자를 입력해야 합니다.',
+  })
   async guess(
     @Param('id', ParseIntPipe) roomId: number,
     @Body() body: { enemyId: number; numbers: number[] },

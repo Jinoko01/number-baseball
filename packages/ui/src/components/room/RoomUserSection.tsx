@@ -11,6 +11,8 @@ import { leaveRoomAction } from '@/lib/actions/leaveRoom';
 import { useRef } from 'react';
 import { revalidateHomeAction } from '@/lib/actions/revalidateGameRoomAction';
 import { SettingNumberModal } from './SettingNumberModal';
+import { getGameState, type GameStateResponse } from '@/lib/apis/game/getState';
+import { GuessNumberModal } from './GuessNumberModal';
 
 interface RoomUserSectionProps {
   roomId: number;
@@ -33,6 +35,9 @@ export function RoomUserSection({
   const [participants, setParticipants] = useState(_participants);
   const [isGaming, setIsGaming] = useState(false);
   const [isSettingNumber, setIsSettingNumber] = useState(false);
+  const [isGuessing, setIsGuessing] = useState(false);
+  const [gameState, setGameState] = useState<GameStateResponse | null>(null);
+  const [statusMsg, setStatusMsg] = useState<string>('');
 
   const handleGameStart = () => {
     socketClient?.emit('gameStart', { roomId });
@@ -78,6 +83,64 @@ export function RoomUserSection({
     };
   }, []);
 
+  useEffect(() => {
+    if (!isGaming) return;
+
+    let mounted = true;
+    let intervalId: NodeJS.Timer | null = null;
+
+    const poll = async () => {
+      try {
+        const state = await getGameState(roomId);
+        if (!mounted) return;
+        setGameState(state);
+
+        const enemy = participants.find((p) => p.user.id !== user.id);
+        const enemyId = enemy?.user.id;
+
+        if (state.state === 'in_progress') {
+          setStatusMsg(
+            state.turn === user.id
+              ? '당신의 차례입니다. 번호를 추측하세요.'
+              : '상대의 차례입니다. 잠시만 기다려주세요.'
+          );
+          if (state.turn === user.id && enemyId) {
+            setIsGuessing(true);
+          } else {
+            setIsGuessing(false);
+          }
+        } else if (state.state === 'waiting') {
+          setStatusMsg('두 플레이어가 번호를 설정 중입니다.');
+          setIsGuessing(false);
+        } else if (state.state === 'finished') {
+          if (state.winner) {
+            setStatusMsg(
+              state.winner === user.id
+                ? '게임 종료! 당신이 승리했습니다.'
+                : '게임 종료! 상대가 승리했습니다.'
+            );
+          } else {
+            setStatusMsg('게임 종료');
+          }
+          setIsGuessing(false);
+          if (intervalId) {
+            clearInterval(intervalId as unknown as number);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    poll();
+    intervalId = setInterval(poll, 2000);
+
+    return () => {
+      mounted = false;
+      if (intervalId) clearInterval(intervalId as unknown as number);
+    };
+  }, [isGaming, roomId, participants, user.id]);
+
   if (!participants) {
     return null;
   }
@@ -87,10 +150,26 @@ export function RoomUserSection({
       {isSettingNumber && (
         <SettingNumberModal
           roomId={roomId}
-          accessToken={accessToken}
           onClose={() => setIsSettingNumber(false)}
           onSubmitted={() => setIsSettingNumber(false)}
         />
+      )}
+      {isGuessing && (
+        <GuessNumberModal
+          roomId={roomId}
+          enemyId={participants.find((p) => p.user.id !== user.id)?.user.id as number}
+          onClose={() => setIsGuessing(false)}
+          onSubmitted={() => {
+            // After submitting a guess, we'll keep polling and let turn switch
+            setIsGuessing(false);
+          }}
+        />
+      )}
+      {/* status */}
+      {isGaming && (
+        <div className='absolute top-4 left-1/2 -translate-x-1/2 text-sm text-gray-700'>
+          {statusMsg}
+        </div>
       )}
       <UserCard
         user={
