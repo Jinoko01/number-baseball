@@ -7,12 +7,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Room } from '../entities/room.entity';
 import { RoomParticipant } from '../entities/room-participant.entity';
 import { Users } from '../entities/users.entity';
+import { GameModule } from '../game/game.module';
 
 @Module({
   imports: [
     ConfigModule,
     JwtModule.register({}),
     TypeOrmModule.forFeature([Room, Users, RoomParticipant]),
+    GameModule,
   ],
   providers: [ChatGateway, RoomService],
 })

@@ -96,4 +96,32 @@ export class GameController {
   ) {
     return await this.gameService.guess(roomId, body.enemyId, body.numbers);
   }
+
+  @Post(':id/start')
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('accessToken')
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiOperation({ summary: '게임 시작 초기화' })
+  @ApiCreatedResponse({ description: '시작 성공' })
+  async startGame(@Param('id', ParseIntPipe) roomId: number) {
+    return await this.gameService.startGame(roomId);
+  }
+
+  @Get(':id/state')
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('accessToken')
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer token',
+    required: true,
+  })
+  @ApiOperation({ summary: '게임 상태 조회' })
+  @ApiOkResponse({ description: '상태 반환' })
+  async getState(@Param('id', ParseIntPipe) roomId: number) {
+    return await this.gameService.getState(roomId);
+  }
 }

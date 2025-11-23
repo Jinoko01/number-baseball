@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { leaveRoomAction } from '@/lib/actions/leaveRoom';
 import { useRef } from 'react';
 import { revalidateHomeAction } from '@/lib/actions/revalidateGameRoomAction';
+import { SettingNumberModal } from './SettingNumberModal';
 
 interface RoomUserSectionProps {
   roomId: number;
@@ -83,6 +84,14 @@ export function RoomUserSection({
 
   return (
     <div className='flex justify-evenly items-center w-full'>
+      {isSettingNumber && (
+        <SettingNumberModal
+          roomId={roomId}
+          accessToken={accessToken}
+          onClose={() => setIsSettingNumber(false)}
+          onSubmitted={() => setIsSettingNumber(false)}
+        />
+      )}
       <UserCard
         user={
           participants[0] && {
@@ -95,7 +104,7 @@ export function RoomUserSection({
         }
       />
       <div className='flex flex-col gap-3'>
-        <Button disabled={participants.length !== 2 && !isGaming} onClick={handleGameStart}>
+        <Button disabled={participants.length !== 2 || isGaming} onClick={handleGameStart}>
           게임 시작
         </Button>
       </div>

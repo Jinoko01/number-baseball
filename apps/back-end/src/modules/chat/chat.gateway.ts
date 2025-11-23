@@ -14,6 +14,7 @@ import { Server, Socket } from 'socket.io';
 import { AccessTokenPayload } from 'src/common/type/jwy-payload.type';
 import { HomeMessageDto } from './dto/home-message.dto';
 import { RoomService } from '../room/room.service';
+import { GameService } from '../game/game.service';
 
 interface AuthenticatedSocket extends Socket {
   data: {
@@ -39,6 +40,7 @@ export class ChatGateway
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly roomService: RoomService,
+    private readonly gameService: GameService,
   ) {}
 
   afterInit() {
@@ -143,6 +145,25 @@ export class ChatGateway
     const participants = await this.roomService.getParticipants(data.roomId);
 
     this.server.to(roomName).emit('roomJoined', participants);
+  }
+
+  @SubscribeMessage('gameStart')
+  async handleGameStart(
+    @MessageBody() data: { roomId: number },
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    const isValidUser = this.checkValidUser(client);
+    if (!isValidUser) {
+      return;
+    }
+
+    const roomName = `room:${data.roomId}`;
+    try {
+      const state = await this.gameService.startGame(data.roomId);
+      this.server.to(roomName).emit('gameStart', state);
+    } catch (e) {
+      client.emit('error', { message: (e as Error).message });
+    }
   }
 
   @SubscribeMessage('roomLeave')
