@@ -41,10 +41,10 @@ function isValidAccessToken(token: string): boolean {
 }
 
 async function checkTokenExpired(req: NextRequest): Promise<NextResponse | null> {
-  const accessToken = req.cookies.get('accessToken');
-  const _refreshToken = req.cookies.get('refreshToken');
+  const accessToken = req.cookies.get('accessToken')?.value;
+  const _refreshToken = req.cookies.get('refreshToken')?.value;
 
-  if (accessToken && _refreshToken && isValidAccessToken(accessToken.value)) {
+  if (accessToken && _refreshToken && isValidAccessToken(accessToken)) {
     try {
       const res = await refreshToken();
 
@@ -52,7 +52,7 @@ async function checkTokenExpired(req: NextRequest): Promise<NextResponse | null>
       return setResponseTokenCookie(response, res.accessToken, res.refreshToken);
     } catch (err) {
       console.error(`[checkTokenExpired] 토큰 재발급 실패 ${err}`);
-      const res = NextResponse.redirect(req.nextUrl.toString(), {
+      const res = NextResponse.redirect(new URL('/', req.url), {
         status: 302,
       });
       res.cookies.delete('accessToken');
