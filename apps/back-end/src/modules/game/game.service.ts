@@ -11,7 +11,11 @@ export class GameService {
     numbers: number[],
   ): Promise<number[]> {
     const setNumbersCacheKey = `numbers:${roomId}:${userId}`;
-    return await this.cacheManager.set(setNumbersCacheKey, numbers);
+    return await this.cacheManager.set(
+      setNumbersCacheKey,
+      numbers,
+      60 * 60 * 24,
+    );
   }
 
   async getNumbers(

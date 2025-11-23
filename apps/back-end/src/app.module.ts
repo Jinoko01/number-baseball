@@ -8,17 +8,17 @@ import typeorm from './config/typeorm';
 import { ChatModule } from './modules/chat/chat.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { GameModule } from './modules/game/game.module';
-import KeyvRedis from '@keyv/redis';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
   imports: [
     CacheModule.registerAsync({
       isGlobal: true,
-      useFactory: () => ({
+      useFactory: async () => ({
         ttl: 1000 * 60 * 60 * 24,
-        stores: [
-          new KeyvRedis(process.env.REDIS_URL ?? 'redis://localhost:6379'),
-        ],
+        store: await redisStore({
+          url: process.env.REDIS_URL ?? 'redis://localhost:6379',
+        }),
       }),
     }),
     ConfigModule.forRoot({
