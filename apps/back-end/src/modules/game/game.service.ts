@@ -1,6 +1,16 @@
 import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { RoomService } from '../room/room.service';
+import { RoomParticipantRole } from 'src/common/enum/room-participant-role.enum';
+
+type LastResult = {
+  enemyId: number;
+  guess: number[];
+  strike: number;
+  ball: number;
+  out: number;
+  at: number;
+};
 
 @Injectable()
 export class GameService {
@@ -66,7 +76,9 @@ export class GameService {
     const turnKey = this.buildTurnKey(roomId);
 
     if (allSet.every((v) => Array.isArray(v) && v.length === 4)) {
-      const host = participants.find((p) => p.role === 'HOST' || p.role === 0);
+      const host = participants.find(
+        (p) => p.role === RoomParticipantRole.HOST,
+      );
       const firstTurnUserId = host?.user?.id ?? userIds[0];
       await this.cacheManager.set(stateKey, 'in_progress', 60 * 60 * 24);
       await this.cacheManager.set(turnKey, firstTurnUserId, 60 * 60 * 24);
@@ -167,7 +179,7 @@ export class GameService {
     if (participants.length !== 2) {
       throw new BadRequestException('두 플레이어가 모두 입장해야 합니다.');
     }
-    const host = participants.find((p) => p.role === 'HOST' || p.role === 0);
+    const host = participants.find((p) => p.role === RoomParticipantRole.HOST);
     const firstTurnUserId = host?.user?.id ?? participants[0].user.id;
     await this.cacheManager.set(
       this.buildStateKey(roomId),
@@ -191,7 +203,7 @@ export class GameService {
     const winner = await this.cacheManager.get<number>(
       this.buildWinnerKey(roomId),
     );
-    const lastResult = await this.cacheManager.get<any>(
+    const lastResult = await this.cacheManager.get<LastResult>(
       this.buildLastResultKey(roomId),
     );
     return { state, turn, winner, lastResult };

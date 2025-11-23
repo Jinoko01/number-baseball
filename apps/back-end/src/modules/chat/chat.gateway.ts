@@ -21,6 +21,11 @@ interface AuthenticatedSocket extends Socket {
     userId?: number;
     username?: string;
   };
+  handshake: Socket['handshake'] & {
+    auth: {
+      token?: string;
+    };
+  };
 }
 
 @WebSocketGateway({
