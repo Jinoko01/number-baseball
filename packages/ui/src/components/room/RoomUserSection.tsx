@@ -32,7 +32,6 @@ export function RoomUserSection({
   const [participants, setParticipants] = useState(_participants);
   const [isGaming, setIsGaming] = useState(false);
   const [isSettingNumber, setIsSettingNumber] = useState(false);
-  const cleanupCalledRef = useRef(false);
 
   const handleGameStart = () => {
     socketClient?.emit('gameStart', { roomId });
@@ -42,35 +41,39 @@ export function RoomUserSection({
     const socket = setSocket({ path: '/chat', accessToken });
     setSocketClient(socket);
 
-    socket.on('roomJoined', (participants: RoomParticipants[]) => {
+    const handleRoomJoined = (participants: RoomParticipants[]) => {
       setParticipants(participants);
       revalidateRoomDetailAction(roomId);
-    });
+    };
 
-    socket.on('roomLeave', (participants: RoomParticipants[]) => {
+    const handleRoomLeave = (participants: RoomParticipants[]) => {
       setParticipants(participants);
       revalidateRoomDetailAction(roomId);
-    });
+    };
 
-    socket.on('gameStart', () => {
+    const handleGameStart = () => {
       setIsGaming(true);
       setIsSettingNumber(true);
-    });
+    };
+
+    const handleDisconnect = async () => {
+      await leaveRoomAction(roomId);
+      await revalidateHomeAction();
+    };
+
+    socket.on('roomJoined', handleRoomJoined);
+    socket.on('roomLeave', handleRoomLeave);
+    socket.on('gameStart', handleGameStart);
+    socket.once('disconnect', handleDisconnect);
 
     socket.emit('roomJoined', { roomId, user });
 
     return () => {
-      if (!cleanupCalledRef.current) {
-        cleanupCalledRef.current = true;
-        return;
-      }
+      socket.off('roomJoined', handleRoomJoined);
+      socket.off('roomLeave', handleRoomLeave);
+      socket.off('gameStart', handleGameStart);
 
-      (async () => {
-        await leaveRoomAction(roomId);
-        socket.emit('roomLeave', { roomId });
-        await revalidateHomeAction();
-        socket.disconnect();
-      })();
+      socket.disconnect();
     };
   }, []);
 
