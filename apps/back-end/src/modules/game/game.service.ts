@@ -9,16 +9,16 @@ export class GameService {
     roomId: number,
     userId: number,
     numbers: number[],
-  ): Promise<void> {
-    const setNumbersCacheKey = `setNumbers:${roomId}:${userId}`;
-    await this.cacheManager.set(setNumbersCacheKey, numbers);
+  ): Promise<number[]> {
+    const setNumbersCacheKey = `numbers:${roomId}:${userId}`;
+    return await this.cacheManager.set(setNumbersCacheKey, numbers);
   }
 
   async getNumbers(
     roomId: number,
     userId: number,
   ): Promise<number[] | null | undefined> {
-    const getNumbersCacheKey = `getNumbers:${roomId}:${userId}`;
+    const getNumbersCacheKey = `numbers:${roomId}:${userId}`;
     return await this.cacheManager.get(getNumbersCacheKey);
   }
 
