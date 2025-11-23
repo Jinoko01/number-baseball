@@ -10,5 +10,6 @@ import { RoomParticipant } from '../entities/room-participant.entity';
   imports: [TypeOrmModule.forFeature([Room, Users, RoomParticipant])],
   controllers: [RoomController],
   providers: [RoomService],
+  exports: [RoomService],
 })
 export class RoomModule {}
