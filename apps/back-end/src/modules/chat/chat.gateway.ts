@@ -209,6 +209,28 @@ export class ChatGateway
     }
   }
 
+  @SubscribeMessage('gameEnd')
+  handleGameEnd(
+    @MessageBody() data: { roomId: number },
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    const isValidUser = this.checkValidUser(client);
+    if (!isValidUser) {
+      return;
+    }
+
+    const roomName = `room:${data.roomId}`;
+
+    const payload = {
+      senderId: client.data.userId,
+      senderName: client.data.username,
+      message: `${client.data.userId}님이 승리하였습니다.`,
+      sentAt: new Date().toISOString(),
+    };
+
+    this.server.to(roomName).emit('roomMessage', payload);
+  }
+
   @SubscribeMessage('roomLeave')
   async handleLeaveGameRoom(
     @MessageBody() data: { roomId: number },

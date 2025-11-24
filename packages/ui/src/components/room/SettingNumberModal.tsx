@@ -63,7 +63,7 @@ export function SettingNumberModal({ roomId, onClose, onSubmitted }: SettingNumb
 
   return (
     <Modal
-      header={<h1>번호 설정</h1>}
+      header={<h1 className='text-xl font-bold'>번호 설정</h1>}
       body={
         <div className='flex flex-col gap-2'>
           <Input
@@ -71,15 +71,13 @@ export function SettingNumberModal({ roomId, onClose, onSubmitted }: SettingNumb
             value={value}
             onChange={(e) => setValue(e.target.value)}
             maxLength={4}
+            className='w-full'
           />
           {error ? <p className='text-red-500 text-sm'>{error}</p> : null}
         </div>
       }
       actions={
-        <div className='flex gap-2'>
-          <Button variant='outline' disabled={loading} onClick={onClose}>
-            닫기
-          </Button>
+        <div className='flex flex-col'>
           <Button disabled={loading} onClick={onSubmit}>
             {loading ? '저장중...' : '저장'}
           </Button>

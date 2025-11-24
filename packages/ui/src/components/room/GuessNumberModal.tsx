@@ -57,6 +57,9 @@ export function GuessNumberModal({ roomId, enemyId, onClose, onSubmitted }: Gues
           guessResult.ball
         }볼 ${guessResult.out}아웃입니다.`,
       });
+      if (guessResult.strike === 4) {
+        socketClient?.emit('gameEnd', { roomId });
+      }
       onSubmitted?.();
       onClose();
     } catch (e) {
@@ -68,7 +71,7 @@ export function GuessNumberModal({ roomId, enemyId, onClose, onSubmitted }: Gues
 
   return (
     <Modal
-      header={<h1>번호 추측</h1>}
+      header={<h1 className='text-xl font-bold'>번호 추측</h1>}
       body={
         <div className='flex flex-col gap-2'>
           <Input
@@ -76,18 +79,16 @@ export function GuessNumberModal({ roomId, enemyId, onClose, onSubmitted }: Gues
             value={value}
             onChange={(e) => setValue(e.target.value)}
             maxLength={4}
+            className='w-full'
           />
           {error ? <p className='text-red-500 text-sm'>{error}</p> : null}
         </div>
       }
       actions={
-        <div className='flex gap-2'>
-          <Button variant='outline' disabled={loading} onClick={onClose}>
-            닫기
-          </Button>
-          <button disabled={loading} onClick={onSubmit}>
+        <div className='flex flex-col'>
+          <Button disabled={loading} onClick={onSubmit}>
             {loading ? '제출중...' : '제출'}
-          </button>
+          </Button>
         </div>
       }
     />
