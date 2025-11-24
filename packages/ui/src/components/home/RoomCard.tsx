@@ -9,7 +9,14 @@ interface RoomCardProps {
 
 export function RoomCard({ room }: RoomCardProps) {
   return (
-    <button onClick={() => joinRoomAction(room.id)}>
+    <button
+      onClick={() => {
+        if (room.currentCount === room.capacity) {
+          return;
+        }
+        joinRoomAction(room.id);
+      }}
+    >
       <li className='cursor-pointer hover:shadow-lg flex flex-col justify-between rounded-md overflow-hidden shadow-md'>
         <div className='bg-blue-100 w-full'>
           <h3 className='text-md font-semibold text-center p-1'>{room.title}</h3>
