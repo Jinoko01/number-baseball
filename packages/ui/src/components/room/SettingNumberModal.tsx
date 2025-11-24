@@ -5,6 +5,7 @@ import { Input } from '../../../@workspace/ui/components/input';
 import { useState } from 'react';
 import { postSetNumbers } from '@/lib/apis/game/postSetNumbers';
 import { useSocketStore } from 'utils';
+import { Button } from '../common/Button';
 
 interface SettingNumberModalProps {
   roomId: number;
@@ -76,16 +77,12 @@ export function SettingNumberModal({ roomId, onClose, onSubmitted }: SettingNumb
       }
       actions={
         <div className='flex gap-2'>
-          <button disabled={loading} className='px-3 py-2 rounded-md border' onClick={onClose}>
+          <Button variant='outline' disabled={loading} onClick={onClose}>
             닫기
-          </button>
-          <button
-            disabled={loading}
-            className='px-3 py-2 rounded-md bg-blue-600 text-white'
-            onClick={onSubmit}
-          >
+          </Button>
+          <Button disabled={loading} onClick={onSubmit}>
             {loading ? '저장중...' : '저장'}
-          </button>
+          </Button>
         </div>
       }
     />

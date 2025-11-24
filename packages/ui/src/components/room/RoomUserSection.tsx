@@ -129,7 +129,7 @@ export function RoomUserSection({
   }
 
   return (
-    <div className='flex justify-evenly items-center w-full'>
+    <>
       {isSettingNumber && (
         <SettingNumberModal
           roomId={roomId}
@@ -147,38 +147,40 @@ export function RoomUserSection({
           }}
         />
       )}
-      {isGaming && (
-        <div className='absolute top-4 left-1/2 -translate-x-1/2 text-sm text-gray-700'>
-          {statusMsg}
+      <div className='flex justify-evenly items-center w-full'>
+        {isGaming && (
+          <div className='absolute top-4 left-1/2 -translate-x-1/2 text-sm text-gray-700'>
+            {statusMsg}
+          </div>
+        )}
+        <UserCard
+          user={
+            participants[0] && {
+              id: participants[0].user.id,
+              name: participants[0].user.name,
+              nickname: participants[0].user.nickname,
+              avatar: participants[0].user.avatar,
+              provider: participants[0].user.provider,
+            }
+          }
+        />
+        <div className='flex flex-col gap-3'>
+          <Button disabled={participants.length !== 2 || isGaming} onClick={handleGameStart}>
+            게임 시작
+          </Button>
         </div>
-      )}
-      <UserCard
-        user={
-          participants[0] && {
-            id: participants[0].user.id,
-            name: participants[0].user.name,
-            nickname: participants[0].user.nickname,
-            avatar: participants[0].user.avatar,
-            provider: participants[0].user.provider,
+        <UserCard
+          user={
+            participants[1] && {
+              id: participants[1].user.id,
+              name: participants[1].user.name,
+              nickname: participants[1].user.nickname,
+              avatar: participants[1].user.avatar,
+              provider: participants[1].user.provider,
+            }
           }
-        }
-      />
-      <div className='flex flex-col gap-3'>
-        <Button disabled={participants.length !== 2 || isGaming} onClick={handleGameStart}>
-          게임 시작
-        </Button>
+        />
       </div>
-      <UserCard
-        user={
-          participants[1] && {
-            id: participants[1].user.id,
-            name: participants[1].user.name,
-            nickname: participants[1].user.nickname,
-            avatar: participants[1].user.avatar,
-            provider: participants[1].user.provider,
-          }
-        }
-      />
-    </div>
+    </>
   );
 }

@@ -6,7 +6,7 @@ import { refreshToken } from '@/lib/actions/refreshToken';
 export async function proxy(req: NextRequest) {
   const resCheckTokenExpired = await checkTokenExpired(req);
 
-  if (resCheckTokenExpired) {
+  if (req.nextUrl.pathname !== '/' && resCheckTokenExpired) {
     return resCheckTokenExpired;
   }
 

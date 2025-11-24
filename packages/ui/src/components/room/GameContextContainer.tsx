@@ -56,7 +56,6 @@ export function GameContextContainer({ roomId }: GameContextContainerProps) {
       </div>
       <div className='flex items-center gap-4'>
         <Input
-          className='border-2 border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300'
           ref={chattingInputRef}
           placeholder='메시지를 입력해주세요.'
           onKeyDown={handleKeyDown}

@@ -8,7 +8,18 @@ interface PostGuessBody {
   headers?: HeadersInit;
 }
 
-export async function postGuess({ roomId, enemyId, numbers, headers }: PostGuessBody) {
+interface PostGuessResponse {
+  strike: number;
+  ball: number;
+  out: number;
+}
+
+export async function postGuess({
+  roomId,
+  enemyId,
+  numbers,
+  headers,
+}: PostGuessBody): Promise<PostGuessResponse> {
   return await fetchUtil({
     url: `${API_ROUTE_URL}/game/${roomId}/guess`,
     method: 'POST',

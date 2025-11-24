@@ -5,6 +5,7 @@ import { Input } from '../../../@workspace/ui/components/input';
 import { useState } from 'react';
 import { postGuess } from '@/lib/apis/game/postGuess';
 import { useSocketStore } from 'utils';
+import { Button } from '../common/Button';
 
 interface GuessNumberModalProps {
   roomId: number;
@@ -48,8 +49,14 @@ export function GuessNumberModal({ roomId, enemyId, onClose, onSubmitted }: Gues
       .map((c) => Number(c));
 
     try {
-      await postGuess({ roomId, enemyId, numbers });
+      const guessResult = await postGuess({ roomId, enemyId, numbers });
       socketClient?.emit('guessed', { roomId });
+      socketClient?.emit('roomMessage', {
+        roomId,
+        message: `${numbers.join('')}를 예측한 결과, ${guessResult.strike}스트라이크 ${
+          guessResult.ball
+        }볼 ${guessResult.out}아웃입니다.`,
+      });
       onSubmitted?.();
       onClose();
     } catch (e) {
@@ -75,14 +82,10 @@ export function GuessNumberModal({ roomId, enemyId, onClose, onSubmitted }: Gues
       }
       actions={
         <div className='flex gap-2'>
-          <button disabled={loading} className='px-3 py-2 rounded-md border' onClick={onClose}>
+          <Button variant='outline' disabled={loading} onClick={onClose}>
             닫기
-          </button>
-          <button
-            disabled={loading}
-            className='px-3 py-2 rounded-md bg-blue-600 text-white'
-            onClick={onSubmit}
-          >
+          </Button>
+          <button disabled={loading} onClick={onSubmit}>
             {loading ? '제출중...' : '제출'}
           </button>
         </div>
