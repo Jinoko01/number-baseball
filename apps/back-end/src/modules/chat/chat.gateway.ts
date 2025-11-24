@@ -224,7 +224,7 @@ export class ChatGateway
     const payload = {
       senderId: client.data.userId,
       senderName: client.data.username,
-      message: `${client.data.userId}님이 승리하였습니다.`,
+      message: `${client.data.username}님이 승리하였습니다.`,
       sentAt: new Date().toISOString(),
     };
 
