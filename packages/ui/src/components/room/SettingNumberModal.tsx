@@ -4,6 +4,7 @@ import { Modal } from '../common/Modal';
 import { Input } from '../../../@workspace/ui/components/input';
 import { useState } from 'react';
 import { postSetNumbers } from '@/lib/apis/game/postSetNumbers';
+import { useSocketStore } from 'utils';
 
 interface SettingNumberModalProps {
   roomId: number;
@@ -15,6 +16,7 @@ export function SettingNumberModal({ roomId, onClose, onSubmitted }: SettingNumb
   const [value, setValue] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { socketClient } = useSocketStore();
 
   const validate = (value: string) => {
     const trimmed = value.replace(/\D/g, '');
@@ -48,6 +50,7 @@ export function SettingNumberModal({ roomId, onClose, onSubmitted }: SettingNumb
         roomId,
         numbers,
       });
+      socketClient?.emit('numbersSet', { roomId });
       onSubmitted?.();
       onClose();
     } catch (e) {

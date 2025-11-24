@@ -4,6 +4,7 @@ import { Modal } from '../common/Modal';
 import { Input } from '../../../@workspace/ui/components/input';
 import { useState } from 'react';
 import { postGuess } from '@/lib/apis/game/postGuess';
+import { useSocketStore } from 'utils';
 
 interface GuessNumberModalProps {
   roomId: number;
@@ -16,6 +17,7 @@ export function GuessNumberModal({ roomId, enemyId, onClose, onSubmitted }: Gues
   const [value, setValue] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { socketClient } = useSocketStore();
 
   const validate = (value: string) => {
     const trimmed = value.replace(/\D/g, '');
@@ -47,6 +49,7 @@ export function GuessNumberModal({ roomId, enemyId, onClose, onSubmitted }: Gues
 
     try {
       await postGuess({ roomId, enemyId, numbers });
+      socketClient?.emit('guessed', { roomId });
       onSubmitted?.();
       onClose();
     } catch (e) {

@@ -171,6 +171,44 @@ export class ChatGateway
     }
   }
 
+  @SubscribeMessage('numbersSet')
+  async handleNumbersSet(
+    @MessageBody() data: { roomId: number },
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    const isValidUser = this.checkValidUser(client);
+    if (!isValidUser) {
+      return;
+    }
+
+    const roomName = `room:${data.roomId}`;
+    try {
+      const state = await this.gameService.getState(data.roomId);
+      this.server.to(roomName).emit('gameState', state);
+    } catch (e) {
+      client.emit('error', { message: (e as Error).message });
+    }
+  }
+
+  @SubscribeMessage('guessed')
+  async handleGuessed(
+    @MessageBody() data: { roomId: number },
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    const isValidUser = this.checkValidUser(client);
+    if (!isValidUser) {
+      return;
+    }
+
+    const roomName = `room:${data.roomId}`;
+    try {
+      const state = await this.gameService.getState(data.roomId);
+      this.server.to(roomName).emit('gameState', state);
+    } catch (e) {
+      client.emit('error', { message: (e as Error).message });
+    }
+  }
+
   @SubscribeMessage('roomLeave')
   async handleLeaveGameRoom(
     @MessageBody() data: { roomId: number },
