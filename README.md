@@ -29,9 +29,17 @@
 
 ### 회원 인증
 
+<img width="960" height="449" alt="image" src="https://github.com/user-attachments/assets/2de0dfe7-a309-42ed-b971-3fb6a4c2d6d5" />
+
 - Github Oauth와 JWT를 사용한 회원 인증
 
 ### 게임방 관리
+
+<img width="960" height="449" alt="image" src="https://github.com/user-attachments/assets/9335d889-a93b-4b6f-8e50-886f1b7642c7" />
+
+<img width="960" height="438" alt="image" src="https://github.com/user-attachments/assets/ec860687-d2a7-417e-a347-6f593d0ab19b" />
+
+<img width="960" height="438" alt="image" src="https://github.com/user-attachments/assets/dd081eec-aa96-4ab1-9cbd-db1e7bf4b821" />
 
 - **방 생성**: 방 만들기 버튼을 통해 방 제목을 입력한 후 생성
 - **방 조회**: 생성된 방 목록을 페이지네이션 방식으로 조회
@@ -39,7 +47,19 @@
 - **방 퇴장**: 퇴장 시 메인 페이지로 이동하고 유저 정보를 즉시 업데이트
 - **방 삭제**: 게임방 내 모든 인원이 퇴장할 경우, 자동으로 방 삭제
 
+<img width="321" height="385" alt="image" src="https://github.com/user-attachments/assets/8dab5fb2-d3c3-4b1b-83ce-c3bc4544132a" />
+
+- **전체 채팅**: '/home' 페이지에 접속 중인 사용자들과 전체 채팅을 할 수 있음
+
 ### 게임 진행
+
+<img width="960" height="437" alt="image" src="https://github.com/user-attachments/assets/db371e11-d989-4846-9596-918e62b64ade" />
+
+<img width="1919" height="875" alt="image" src="https://github.com/user-attachments/assets/2c2b9e91-72cd-4bb6-98c8-ebb072aca6ee" />
+
+<img width="576" height="148" alt="image" src="https://github.com/user-attachments/assets/0f5bf816-a99c-418a-9d04-ea9c076a6ce1" />
+
+<img width="580" height="151" alt="image" src="https://github.com/user-attachments/assets/b9e0967a-2392-4a93-9e1d-63ef14fc9e10" />
 
 - **숫자 지정**: 게임 시작 시 각자 중복되지 않은 4개의 숫자를 지정
 - **숫자 예측**: 순서를 돌아가며, 상대방의 숫자를 예측하여 제출
