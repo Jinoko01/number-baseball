@@ -11,5 +11,6 @@ export function setSocket({ path, accessToken }: SetSocketParameter): Socket {
     withCredentials: true,
     transports: ['websocket'],
     auth: { token: accessToken },
+    reconnectionAttempts: 5,
   });
 }
