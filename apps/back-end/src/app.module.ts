@@ -9,9 +9,12 @@ import { ChatModule } from './modules/chat/chat.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { GameModule } from './modules/game/game.module';
 import { redisStore } from 'cache-manager-redis-yet';
+import { SentryModule, SentryGlobalFilter } from '@sentry/nestjs/setup';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
+    SentryModule.forRoot(),
     CacheModule.registerAsync({
       isGlobal: true,
       useFactory: async () => ({
@@ -39,6 +42,11 @@ import { redisStore } from 'cache-manager-redis-yet';
     GameModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: SentryGlobalFilter,
+    },
+  ],
 })
 export class AppModule {}
